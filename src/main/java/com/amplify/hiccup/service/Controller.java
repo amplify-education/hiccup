@@ -1,8 +1,8 @@
-package com.amplify.hiccup.client;
+package com.amplify.hiccup.service;
 
 import android.database.Cursor;
 import android.net.Uri;
 
-public interface HiccupClient {
+public interface Controller {
     Cursor get(Uri uri);
 }
