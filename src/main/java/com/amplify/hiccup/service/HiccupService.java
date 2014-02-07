@@ -10,17 +10,20 @@ public class HiccupService {
     private final UriMatcher uriMatcher;
     private final String authority;
     private final SparseArray<Controller> controllerMap;
+    private final HttpCursorFactory httpCursorFactory;
 
     private int routeIdCounter;
 
-    public HiccupService(String authority) {
-        this(authority, new UriMatcher(UriMatcher.NO_MATCH), new SparseArray<Controller>());
+    public HiccupService(String authority, JsonConverter jsonConverter) {
+        this(authority, new UriMatcher(UriMatcher.NO_MATCH), new SparseArray<Controller>(), new HttpCursorFactory(jsonConverter));
     }
 
-    protected HiccupService(String authority, UriMatcher uriMatcher, SparseArray<Controller> controllerMap) {
+    protected HiccupService(String authority, UriMatcher uriMatcher, SparseArray<Controller> controllerMap,
+                            HttpCursorFactory httpCursorFactory) {
         this.authority = authority;
         this.uriMatcher = uriMatcher;
         this.controllerMap = controllerMap;
+        this.httpCursorFactory = httpCursorFactory;
     }
 
     public HiccupService newRoute(String path, Controller controller) {
@@ -33,6 +36,7 @@ public class HiccupService {
     public Cursor get(Uri uri) {
         int uriId = uriMatcher.match(uri);
         Controller controller = controllerMap.get(uriId);
-        return controller.get(uri);
+        Object result = controller.get(uri);
+        return httpCursorFactory.from(result);
     }
 }

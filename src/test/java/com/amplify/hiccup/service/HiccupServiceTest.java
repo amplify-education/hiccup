@@ -8,12 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class HiccupServiceTest {
@@ -30,13 +28,15 @@ public class HiccupServiceTest {
     private SparseArray<Controller> controllerMap;
     @Mock
     private Controller controller;
+    @Mock
+    private HttpCursorFactory httpCursorFactory;
 
     @Before
     public void setUp() {
         initMocks(this);
-        hiccupService = new HiccupService(AUTHORITY, uriMatcher, controllerMap);
+        hiccupService = new HiccupService(AUTHORITY, uriMatcher, controllerMap, httpCursorFactory);
     }
-    
+
     @Test
     public void shouldAddMultipleRoutes() {
         hiccupService.newRoute(ROUTE_ONE, controller);
@@ -51,9 +51,11 @@ public class HiccupServiceTest {
     @Test
     public void shouldDelegateGetRequestToMatchingControllerForRoute() {
         Uri uri = mock(Uri.class);
+        Object expectedResult = new Object();
         Cursor expectedCursor = mock(Cursor.class);
         when(controllerMap.get(anyInt())).thenReturn(controller);
-        when(controller.get(uri)).thenReturn(expectedCursor);
+        when(controller.get(uri)).thenReturn(expectedResult);
+        when(httpCursorFactory.from(expectedResult)).thenReturn(expectedCursor);
 
         Cursor actualCursor = hiccupService.get(uri);
 
