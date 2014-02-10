@@ -8,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 
+import java.util.Arrays;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
@@ -18,21 +20,35 @@ public class HttpCursorFactoryTest {
 
     private HttpCursorFactory factory;
 
-    private Object dbModel;
     @Mock
     private JsonConverter jsonConverter;
 
     @Before
     public void setUp() {
         initMocks(this);
-        dbModel = new Object();
 
         factory = new HttpCursorFactory(jsonConverter);
     }
 
     @Test
-    public void shouldConvertSingleObjectIntoCursorWithBaseColumnId() {
-        Cursor cursor = factory.from(dbModel);
+    public void shouldConvertSingleModelIntoCursorWithSingleRow() {
+        Cursor cursor = factory.createCursor(new Object());
+
+        assertThat(cursor.getCount(), is(1));
+    }
+
+    @Test
+    public void shouldConvertMultipleModelsIntoCursorWithMultipleRows() {
+        Iterable<?> someList = Arrays.asList(new Object(), new Object(), new Object());
+
+        Cursor cursor = factory.createCursor(someList);
+
+        assertThat(cursor.getCount(), is(3));
+    }
+
+    @Test
+    public void shouldConvertSingleModelIntoCursorWithBaseColumnId() {
+        Cursor cursor = factory.createCursor(new Object());
 
         int idColumn = cursor.getColumnIndex(BaseColumns._ID);
         cursor.moveToFirst();
@@ -40,15 +56,32 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
-    public void shouldConvertSingleObjectIntoCursorWithJsonBody() {
-        String expectedBody = "helllllooooooo";
-        when(jsonConverter.toJson(dbModel)).thenReturn(expectedBody);
+    public void shouldConvertSingleModelIntoCursorWithJsonBody() {
+        String expectedJsonBody = "{\"aKey\" : \"some value\"}";
+        Object dbModel = new Object();
+        when(jsonConverter.toJson(dbModel)).thenReturn(expectedJsonBody);
 
-        Cursor cursor = factory.from(dbModel);
+        Cursor cursor = factory.createCursor(dbModel);
 
         int bodyColumn = cursor.getColumnIndex("body");
         cursor.moveToFirst();
         String actualBody = cursor.getString(bodyColumn);
-        assertThat(actualBody, is(expectedBody));
+        assertThat(actualBody, is(expectedJsonBody));
     }
+
+    @Test
+    public void shouldConvertMultipleModelsIntoCursorWithJsonBody() {
+        String expectedJsonBody = "{\"someKey\" : \"a value\"}";
+        Object dbModel = new Object();
+        Iterable<?> modelItems = Arrays.asList(dbModel);
+        when(jsonConverter.toJson(dbModel)).thenReturn(expectedJsonBody);
+
+        Cursor cursor = factory.createCursor(modelItems);
+
+        int bodyColumn = cursor.getColumnIndex("body");
+        cursor.moveToFirst();
+        String actualBody = cursor.getString(bodyColumn);
+        assertThat(actualBody, is(expectedJsonBody));
+    }
+
 }

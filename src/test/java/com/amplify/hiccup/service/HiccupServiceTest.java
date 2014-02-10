@@ -55,7 +55,7 @@ public class HiccupServiceTest {
         Cursor expectedCursor = mock(Cursor.class);
         when(controllerMap.get(anyInt())).thenReturn(controller);
         when(controller.get(uri)).thenReturn(expectedResult);
-        when(httpCursorFactory.from(expectedResult)).thenReturn(expectedCursor);
+        when(httpCursorFactory.createCursor(expectedResult)).thenReturn(expectedCursor);
 
         Cursor actualCursor = hiccupService.get(uri);
 

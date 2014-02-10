@@ -37,6 +37,6 @@ public class HiccupService {
         int uriId = uriMatcher.match(uri);
         Controller controller = controllerMap.get(uriId);
         Object result = controller.get(uri);
-        return httpCursorFactory.from(result);
+        return httpCursorFactory.createCursor(result);
     }
 }
