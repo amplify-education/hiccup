@@ -12,6 +12,7 @@ import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -77,18 +78,21 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
-    public void shouldConvertMultipleModelsIntoCursorWithJsonBody() {
-        String expectedJsonBody = "{\"someKey\" : \"a value\"}";
-        Object dbModel = new Object();
-        Iterable<?> modelItems = Arrays.asList(dbModel);
-        when(jsonConverter.toJson(dbModel)).thenReturn(expectedJsonBody);
+    public void shouldConvertMultipleModelsIntoCursorWithMultipleJsonBody() {
+        String expectedJsonOne = "{\"someKey\" : \"a value\"}";
+        String expectedJsonTwo = "{\"anotherKey\" : \"another value!\"}";
+        String expectedJsonThree = "{\"toBeSure\" : \"yet another value\"}";
+        when(jsonConverter.toJson(anyObject())).thenReturn(expectedJsonOne, expectedJsonTwo, expectedJsonThree);
 
-        Cursor cursor = factory.createCursor(modelItems);
+        Cursor cursor = factory.createCursor(Arrays.asList(new Object(), new Object(), new Object()));
 
         int bodyColumn = cursor.getColumnIndex("body");
         cursor.moveToFirst();
-        String actualBody = cursor.getString(bodyColumn);
-        assertThat(actualBody, is(expectedJsonBody));
+        assertThat(cursor.getString(bodyColumn), is(expectedJsonOne));
+        cursor.moveToNext();
+        assertThat(cursor.getString(bodyColumn), is(expectedJsonTwo));
+        cursor.moveToNext();
+        assertThat(cursor.getString(bodyColumn), is(expectedJsonThree));
     }
 
 }
