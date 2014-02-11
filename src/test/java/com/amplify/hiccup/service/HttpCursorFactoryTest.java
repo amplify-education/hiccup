@@ -31,6 +31,13 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
+    public void shouldReturnEmptyCursorForNullModel() {
+        Cursor cursor = factory.createCursor(null);
+
+        assertThat(cursor.getCount(), is(0));
+    }
+
+    @Test
     public void shouldConvertSingleModelIntoCursorWithSingleRow() {
         Cursor cursor = factory.createCursor(new Object());
 

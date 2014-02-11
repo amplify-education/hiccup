@@ -5,12 +5,13 @@ import android.database.MatrixCursor;
 import android.provider.BaseColumns;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 public class HttpCursorFactory {
 
     private static final String BODY_COLUMN = "body";
 
-    private JsonConverter jsonConverter;
+    private final JsonConverter jsonConverter;
 
     public HttpCursorFactory(JsonConverter jsonConverter) {
         this.jsonConverter = jsonConverter;
@@ -19,7 +20,10 @@ public class HttpCursorFactory {
     public Cursor createCursor(Object modelToConvert) {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, BODY_COLUMN});
         Iterable<Object> modelItems;
-        if (modelToConvert instanceof Iterable) {
+        if (modelToConvert == null) {
+            modelItems = Collections.emptyList();
+        }
+        else if (modelToConvert instanceof Iterable) {
             modelItems = (Iterable) modelToConvert;
         }
         else {
