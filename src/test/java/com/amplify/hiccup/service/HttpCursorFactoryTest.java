@@ -64,6 +64,19 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
+    public void shouldConvertMultipleModelsIntoCursorWithIncrementingBaseColumnId() {
+        Cursor cursor = factory.createCursor(Arrays.asList(new Object(), new Object(), new Object()));
+
+        int idColumn = cursor.getColumnIndex(BaseColumns._ID);
+        cursor.moveToFirst();
+        assertThat(cursor.getLong(idColumn), is(1L));
+        cursor.moveToNext();
+        assertThat(cursor.getLong(idColumn), is(2L));
+        cursor.moveToNext();
+        assertThat(cursor.getLong(idColumn), is(3L));
+    }
+
+    @Test
     public void shouldConvertSingleModelIntoCursorWithJsonBody() {
         String expectedJsonBody = "{\"aKey\" : \"some value\"}";
         Object dbModel = new Object();
