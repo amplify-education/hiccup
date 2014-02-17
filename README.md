@@ -59,7 +59,7 @@ public boolean onCreate() {
 public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                     String sortOrder) {
     // Delegate GET request to controller based on route
-    return hiccupService.get(uri);
+    return hiccupService.delegateQuery(uri);
 }
 ```
 
