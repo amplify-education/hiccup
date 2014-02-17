@@ -55,6 +55,13 @@ public class HiccupServiceTest {
         verify(controllerMap).put(2, controller);
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void shouldThrowUnsupportedOperationExceptionForNonMatchingRoute() {
+        when(uriMatcher.match(uri)).thenReturn(-1);
+
+        hiccupService.delegateQuery(uri);
+    }
+
     @Test
     public void shouldDelegateGetRequestToMatchingControllerForRoute() {
         Object model = new Object();

@@ -37,21 +37,27 @@ public class HiccupService {
     }
 
     public Cursor delegateQuery(Uri uri) {
-        int uriId = uriMatcher.match(uri);
-        Controller controller = controllerMap.get(uriId);
+        Controller controller = getController(uri);
         Object result = controller.get(uri);
         return httpCursorFactory.createCursor(result);
     }
 
     public Uri delegateInsert(Uri uri, ContentValues contentValues) {
+        Controller controller = getController(uri);
         String method = contentValues.getAsString(METHOD);
         if ("POST".equals(method)) {
-            int uriId = uriMatcher.match(uri);
-            Controller controller = controllerMap.get(uriId);
             return controller.post(uri, contentValues);
         }
         else {
             throw new UnsupportedOperationException("Unsupported Http method (" + method + ")");
         }
+    }
+
+    private Controller getController(Uri uri) {
+        int uriId = uriMatcher.match(uri);
+        if (uriId == -1) {
+            throw new UnsupportedOperationException("Path does not match any route (" + uri.getPath() + ")");
+        }
+        return controllerMap.get(uriId);
     }
 }
