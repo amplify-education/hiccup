@@ -1,11 +1,14 @@
 package com.amplify.hiccup.service;
 
+import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.SparseArray;
 
 public class HiccupService {
+
+    private static final String METHOD = "method";
 
     private final UriMatcher uriMatcher;
     private final String authority;
@@ -33,10 +36,22 @@ public class HiccupService {
         return this;
     }
 
-    public Cursor get(Uri uri) {
+    public Cursor delegateQuery(Uri uri) {
         int uriId = uriMatcher.match(uri);
         Controller controller = controllerMap.get(uriId);
         Object result = controller.get(uri);
         return httpCursorFactory.createCursor(result);
+    }
+
+    public Uri delegateInsert(Uri uri, ContentValues contentValues) {
+        String method = contentValues.getAsString(METHOD);
+        if ("POST".equals(method)) {
+            int uriId = uriMatcher.match(uri);
+            Controller controller = controllerMap.get(uriId);
+            return controller.post(uri, contentValues);
+        }
+        else {
+            throw new UnsupportedOperationException("Unsupported Http method (" + method + ")");
+        }
     }
 }
