@@ -2,15 +2,19 @@
 
 Hiccup is an Android library that layers _Http In ContentProviders_.
 
-It aims to bring RESTful and MVC-like concepts to ContentProviders to separate client/server concerns, simplify app client access, and improve code maintainability. A ContentProvider is essentially a server, so the idea is that we can treat it like one and use some well-established best practices.
+It aims to bring RESTful and MVC-like concepts to ContentProviders to separate client/server concerns, simplify app
+client access, and improve code maintainability. A ContentProvider is essentially a server, so the idea is that we
+can treat it like one and use some well-established best practices.
 
 #### Status
 Alpha, work in progress. Use at your own discretion. Currently supports:
+
 1. GET requests
 
 #### Motivation
 
-The default Android ContentProvider interface poses some challeneges & limitations. It is half REST and half SQL, which result in the following:
+The default Android ContentProvider interface poses some challenges & limitations. It is half REST and half SQL,
+which result in the following:
 
 1. exposes underlying db representation to clients
 1. table joins are difficult to support when using uri's
@@ -23,7 +27,8 @@ Hiccup tries to overcome these challenges.
 
 #### Example CursorAdapter
 Use a CursorLoader to make a REST request, eg, ``content://com.your.authority/categories/52/products?sort=name``.
-We get back an HttpCursor, which has an **_id** (for adapters) and **body**, which is JSON of our domain models. So let's bind our views.
+We get back an HttpCursor, which has an **_id** (for adapters) and **body**, which is JSON of our domain models.
+So let's bind our views.
 
 ```Java
 @Override
@@ -39,13 +44,14 @@ public void bindView(View view, Context context, Cursor cursor) {
 
 #### Example ContentProvider/Routes
 
-Here, we initialize Hiccup service, create routes, and delegate to controllers.
+Here, we init Hiccup service, create routes, and delegate to controllers. We provide Hiccup with an implementation
+of JsonConverter so that we have control over how the JSON is generated.
 
 ```Java
 @Override
 public boolean onCreate() {
     super.onCreate();
-    hiccupService = new HiccupService("com.your.authority")
+    hiccupService = new HiccupService("com.your.authority", new JsonConverterImpl())
             .newRoute("categories/#/products", new ProductsCollectionController());
 }
 
