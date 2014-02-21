@@ -10,6 +10,7 @@ can treat it like one and use some well-established best practices.
 Alpha, work in progress. Use at your own discretion. Currently supports:
 
 1. GET requests
+2. POST requests
 
 #### Motivation
 
