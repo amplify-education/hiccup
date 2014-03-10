@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -22,17 +23,17 @@ public class HttpCursorFactoryTest {
     private HttpCursorFactory factory;
 
     @Mock
-    private JsonConverter jsonConverter;
+    private Response response;
 
     @Before
     public void setUp() {
         initMocks(this);
 
-        factory = new HttpCursorFactory(jsonConverter);
+        factory = new HttpCursorFactory();
     }
 
     @Test
-    public void shouldReturnEmptyCursorForNullModel() {
+    public void shouldReturnEmptyCursorForNullResponse() {
         Cursor cursor = factory.createCursor(null);
 
         assertThat(cursor.getCount(), is(0));
@@ -40,23 +41,28 @@ public class HttpCursorFactoryTest {
 
     @Test
     public void shouldConvertSingleModelIntoCursorWithSingleRow() {
-        Cursor cursor = factory.createCursor(new Object());
+        when(response.getResults()).thenReturn(Arrays.asList(new Object()));
+
+        Cursor cursor = factory.createCursor(response);
 
         assertThat(cursor.getCount(), is(1));
     }
 
     @Test
     public void shouldConvertMultipleModelsIntoCursorWithMultipleRows() {
-        Iterable<?> someList = Arrays.asList(new Object(), new Object(), new Object());
+        Iterable<Object> modelObjects = Arrays.asList(new Object(), new Object(), new Object());
+        when(response.getResults()).thenReturn(modelObjects);
 
-        Cursor cursor = factory.createCursor(someList);
+        Cursor cursor = factory.createCursor(response);
 
         assertThat(cursor.getCount(), is(3));
     }
 
     @Test
     public void shouldConvertSingleModelIntoCursorWithBaseColumnId() {
-        Cursor cursor = factory.createCursor(new Object());
+        when(response.getResults()).thenReturn(Arrays.asList(new Object()));
+
+        Cursor cursor = factory.createCursor(response);
 
         int idColumn = cursor.getColumnIndex(BaseColumns._ID);
         cursor.moveToFirst();
@@ -65,7 +71,9 @@ public class HttpCursorFactoryTest {
 
     @Test
     public void shouldConvertMultipleModelsIntoCursorWithIncrementingBaseColumnId() {
-        Cursor cursor = factory.createCursor(Arrays.asList(new Object(), new Object(), new Object()));
+        List<Object> modelObjects = Arrays.asList(new Object(), new Object(), new Object());
+        when(response.getResults()).thenReturn(modelObjects);
+        Cursor cursor = factory.createCursor(response);
 
         int idColumn = cursor.getColumnIndex(BaseColumns._ID);
         cursor.moveToFirst();
@@ -78,16 +86,17 @@ public class HttpCursorFactoryTest {
 
     @Test
     public void shouldConvertSingleModelIntoCursorWithJsonBody() {
-        String expectedJsonBody = "{\"aKey\" : \"some value\"}";
-        Object dbModel = new Object();
-        when(jsonConverter.toJson(dbModel)).thenReturn(expectedJsonBody);
+        String expectedBody = "{\"aKey\" : \"some value\"}";
+        Object modelObject = new Object();
+        when(response.getResults()).thenReturn(Arrays.asList(modelObject));
+        when(response.getBody(modelObject)).thenReturn(expectedBody);
 
-        Cursor cursor = factory.createCursor(dbModel);
+        Cursor cursor = factory.createCursor(response);
 
         int bodyColumn = cursor.getColumnIndex("body");
         cursor.moveToFirst();
         String actualBody = cursor.getString(bodyColumn);
-        assertThat(actualBody, is(expectedJsonBody));
+        assertThat(actualBody, is(expectedBody));
     }
 
     @Test
@@ -95,9 +104,11 @@ public class HttpCursorFactoryTest {
         String expectedJsonOne = "{\"someKey\" : \"a value\"}";
         String expectedJsonTwo = "{\"anotherKey\" : \"another value!\"}";
         String expectedJsonThree = "{\"toBeSure\" : \"yet another value\"}";
-        when(jsonConverter.toJson(anyObject())).thenReturn(expectedJsonOne, expectedJsonTwo, expectedJsonThree);
+        List<Object> modelObjects = Arrays.asList(new Object(), new Object(), new Object());
+        when(response.getResults()).thenReturn(modelObjects);
+        when(response.getBody(anyObject())).thenReturn(expectedJsonOne, expectedJsonTwo, expectedJsonThree);
 
-        Cursor cursor = factory.createCursor(Arrays.asList(new Object(), new Object(), new Object()));
+        Cursor cursor = factory.createCursor(response);
 
         int bodyColumn = cursor.getColumnIndex("body");
         cursor.moveToFirst();

@@ -17,8 +17,8 @@ public class HiccupService {
 
     private int routeIdCounter;
 
-    public HiccupService(String authority, JsonConverter jsonConverter) {
-        this(authority, new UriMatcher(UriMatcher.NO_MATCH), new SparseArray<Controller>(), new HttpCursorFactory(jsonConverter));
+    public HiccupService(String authority) {
+        this(authority, new UriMatcher(UriMatcher.NO_MATCH), new SparseArray<Controller>(), new HttpCursorFactory());
     }
 
     protected HiccupService(String authority, UriMatcher uriMatcher, SparseArray<Controller> controllerMap,
@@ -38,7 +38,7 @@ public class HiccupService {
 
     public Cursor delegateQuery(Uri uri) {
         Controller controller = getController(uri);
-        Object result = controller.get(uri);
+        Response result = controller.get(uri);
         return httpCursorFactory.createCursor(result);
     }
 

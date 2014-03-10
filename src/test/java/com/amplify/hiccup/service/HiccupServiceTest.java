@@ -64,11 +64,11 @@ public class HiccupServiceTest {
 
     @Test
     public void shouldDelegateGetRequestToMatchingControllerForRoute() {
-        Object model = new Object();
+        Response response = mock(Response.class);
         Cursor expectedCursor = mock(Cursor.class);
         when(controllerMap.get(anyInt())).thenReturn(controller);
-        when(controller.get(uri)).thenReturn(model);
-        when(httpCursorFactory.createCursor(model)).thenReturn(expectedCursor);
+        when(controller.get(uri)).thenReturn(response);
+        when(httpCursorFactory.createCursor(response)).thenReturn(expectedCursor);
 
         Cursor actualCursor = hiccupService.delegateQuery(uri);
 
