@@ -39,7 +39,7 @@ public void bindView(View view, Context context, Cursor cursor) {
     Product product = new Gson().fromJson(body, Product.class);
 
     TextView productNameView = (TextView) view.findViewById(R.id.product_name);
-    productNameView.setText(playlist.name());
+    productNameView.setText(product.name());
 }
 ```
 
@@ -84,11 +84,11 @@ public class ProductsCollectionController implements Controller {
         // is generated in the HttpCursor that Hiccup will return from this query
         return new Response<Product>() {
             @Override
-            public Iterable<Playlist> getResults() {
+            public Iterable<Product> getResults() {
                 return products;
             }
             @Override
-            public String getBody(Playlist model) {
+            public String getBody(Product model) {
                 return jsonConverter.toJson(model);
             }
         };
