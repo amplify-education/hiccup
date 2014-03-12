@@ -14,19 +14,21 @@ Alpha, work in progress. Use at your own discretion. Currently supports:
 
 #### Motivation
 
-The default Android ContentProvider interface poses some challenges & limitations. It is half REST and half SQL,
-which result in the following:
+Android's ContentProvider is a great tool for data abstraction and sharing.
+But the provided interface poses some unintended challenges & limitations.
+It is half REST and half SQL, which result in the following:
 
 1. exposes underlying db representation to clients
 1. table joins are difficult to support when using uri's
 1. difficult to represent complex models in flat map of Cursor results or ContentValues
+1. restructuring tables (data normalization) breaks client code
 1. assumes SQL backend (ie, does not easily support NOSQL, file, shared pref, etc.)
 
 Hiccup tries to overcome these challenges.
 
 ## Usage
 
-#### Step 1. Example CursorAdapter
+#### Client side (CursorAdapter)
 In this example, let's assume we have used a CursorLoader to make a REST request to ``content://com.your.authority/categories/52/products?sort=name``.
 We get back an HttpCursor, which has an **_id** (for adapters) and **body**, which in this example is JSON of our domain models.
 Now we can bind our views using those domain models.
@@ -43,7 +45,7 @@ public void bindView(View view, Context context, Cursor cursor) {
 }
 ```
 
-#### Step 2. Example ContentProvider/Routes
+#### Server side (ContentProvider)
 
 Here, we init Hiccup service, create routes, and delegate to controllers.
 
@@ -63,7 +65,7 @@ public Cursor query(Uri uri, String[] projection, String selection, String[] sel
 }
 ```
 
-#### Step 3. Example Controller
+#### Server side (Controller)
 
 This controller is responsible for the products collection for the route: _categories/#/products_.
 
