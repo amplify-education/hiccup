@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import com.amplify.hiccup.service.JsonConverter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,8 +32,6 @@ public class HiccupClientTest {
     private ContentResolver contentResolver;
     @Mock
     private Uri uri;
-    @Mock
-    private JsonConverter jsonConverter;
 
     @Before
     public void setUp() throws Exception {
@@ -42,7 +39,7 @@ public class HiccupClientTest {
 
         given(context.getContentResolver()).willReturn(contentResolver);
 
-        hiccupClient = new HiccupClient(context, jsonConverter);
+        hiccupClient = new HiccupClient(context);
     }
 
     @Test
@@ -57,7 +54,7 @@ public class HiccupClientTest {
 
     @Test
     public void shouldInsertAsPostToContentProviderWithPostMethod() {
-        hiccupClient.post(uri, new Object());
+        hiccupClient.post(uri, null);
 
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
         verify(contentResolver).insert(eq(uri), captor.capture());
@@ -67,11 +64,9 @@ public class HiccupClientTest {
 
     @Test
     public void shouldInsertAsPostToContentProviderWithJsonModel() {
-        Object model = new Object();
         String expectedJson = "Lois, this is not my Batman glass.";
-        when(jsonConverter.toJson(model)).thenReturn(expectedJson);
 
-        hiccupClient.post(uri, model);
+        hiccupClient.post(uri, expectedJson);
 
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
         verify(contentResolver).insert(eq(uri), captor.capture());
@@ -84,7 +79,7 @@ public class HiccupClientTest {
         Uri expectedUri = mock(Uri.class);
         when(contentResolver.insert(eq(uri), any(ContentValues.class))).thenReturn(expectedUri);
 
-        Uri actualUri = hiccupClient.post(uri, new Object());
+        Uri actualUri = hiccupClient.post(uri, null);
 
         assertThat(actualUri, is(expectedUri));
     }
