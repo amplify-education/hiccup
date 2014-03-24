@@ -43,7 +43,7 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void shouldSendUriRequestViaContentResolver() {
+    public void shouldMakeGetRequest() {
         Cursor expectedCursor = mock(Cursor.class);
         when(contentResolver.query(uri, null, null, null, null)).thenReturn(expectedCursor);
 
@@ -53,7 +53,7 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void shouldInsertAsPostToContentProviderWithPostMethod() {
+    public void shouldMakePostRequestWithPostMethod() {
         hiccupClient.post(uri, null);
 
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
@@ -63,19 +63,19 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void shouldInsertAsPostToContentProviderWithJsonModel() {
-        String expectedJson = "Lois, this is not my Batman glass.";
+    public void shouldIncludeBodyInPostRequest() {
+        String body = "Lois, this is not my Batman glass.";
 
-        hiccupClient.post(uri, expectedJson);
+        hiccupClient.post(uri, body);
 
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
         verify(contentResolver).insert(eq(uri), captor.capture());
         ContentValues contentValues = captor.getValue();
-        assertThat(contentValues.getAsString(BODY), is(expectedJson));
+        assertThat(contentValues.getAsString(BODY), is(body));
     }
 
     @Test
-    public void shouldReturnUriFromInsertAsPostToContentProvider() {
+    public void shouldReturnUriFromPostRequest() {
         Uri expectedUri = mock(Uri.class);
         when(contentResolver.insert(eq(uri), any(ContentValues.class))).thenReturn(expectedUri);
 
