@@ -12,8 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -49,7 +48,7 @@ public class HiccupClientTest {
 
         Cursor actualCursor = hiccupClient.get(uri);
 
-        assertThat(actualCursor, is(expectedCursor));
+        assertThat(actualCursor).isEqualTo(expectedCursor);
     }
 
     @Test
@@ -59,7 +58,7 @@ public class HiccupClientTest {
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
         verify(contentResolver).insert(eq(uri), captor.capture());
         ContentValues contentValues = captor.getValue();
-        assertThat(contentValues.getAsString(METHOD), is("POST"));
+        assertThat(contentValues.getAsString(METHOD)).isEqualTo("POST");
     }
 
     @Test
@@ -71,7 +70,7 @@ public class HiccupClientTest {
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
         verify(contentResolver).insert(eq(uri), captor.capture());
         ContentValues contentValues = captor.getValue();
-        assertThat(contentValues.getAsString(BODY), is(body));
+        assertThat(contentValues.getAsString(BODY)).isEqualTo(body);
     }
 
     @Test
@@ -81,6 +80,6 @@ public class HiccupClientTest {
 
         Uri actualUri = hiccupClient.post(uri, null);
 
-        assertThat(actualUri, is(expectedUri));
+        assertThat(actualUri).isEqualTo(expectedUri);
     }
 }

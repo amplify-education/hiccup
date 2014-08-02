@@ -11,8 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -72,7 +71,7 @@ public class HiccupServiceTest {
 
         Cursor actualCursor = hiccupService.delegateQuery(uri);
 
-        assertThat(actualCursor, is(expectedCursor));
+        assertThat(actualCursor).isEqualTo(expectedCursor);
     }
 
     @Test
@@ -85,7 +84,7 @@ public class HiccupServiceTest {
 
         Uri actualUri = hiccupService.delegateInsert(uri, contentValues);
 
-        assertThat(actualUri, is(expectedUri));
+        assertThat(actualUri).isEqualTo(expectedUri);
     }
 
     @Test(expected = UnsupportedOperationException.class)

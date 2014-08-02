@@ -11,8 +11,7 @@ import org.robolectric.RobolectricTestRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -36,7 +35,7 @@ public class HttpCursorFactoryTest {
     public void shouldReturnEmptyCursorForNullResponse() {
         Cursor cursor = factory.createCursor(null);
 
-        assertThat(cursor.getCount(), is(0));
+        assertThat(cursor.getCount()).isEqualTo(0);
     }
 
     @Test
@@ -45,7 +44,7 @@ public class HttpCursorFactoryTest {
 
         Cursor cursor = factory.createCursor(response);
 
-        assertThat(cursor.getCount(), is(1));
+        assertThat(cursor.getCount()).isEqualTo(1);
     }
 
     @Test
@@ -55,7 +54,7 @@ public class HttpCursorFactoryTest {
 
         Cursor cursor = factory.createCursor(response);
 
-        assertThat(cursor.getCount(), is(3));
+        assertThat(cursor.getCount()).isEqualTo(3);
     }
 
     @Test
@@ -66,7 +65,7 @@ public class HttpCursorFactoryTest {
 
         int idColumn = cursor.getColumnIndex(BaseColumns._ID);
         cursor.moveToFirst();
-        assertThat(cursor.getLong(idColumn), is(1L));
+        assertThat(cursor.getLong(idColumn)).isEqualTo(1L);
     }
 
     @Test
@@ -77,11 +76,11 @@ public class HttpCursorFactoryTest {
 
         int idColumn = cursor.getColumnIndex(BaseColumns._ID);
         cursor.moveToFirst();
-        assertThat(cursor.getLong(idColumn), is(1L));
+        assertThat(cursor.getLong(idColumn)).isEqualTo(1L);
         cursor.moveToNext();
-        assertThat(cursor.getLong(idColumn), is(2L));
+        assertThat(cursor.getLong(idColumn)).isEqualTo(2L);
         cursor.moveToNext();
-        assertThat(cursor.getLong(idColumn), is(3L));
+        assertThat(cursor.getLong(idColumn)).isEqualTo(3L);
     }
 
     @Test
@@ -96,7 +95,7 @@ public class HttpCursorFactoryTest {
         int bodyColumn = cursor.getColumnIndex("body");
         cursor.moveToFirst();
         String actualBody = cursor.getString(bodyColumn);
-        assertThat(actualBody, is(expectedBody));
+        assertThat(actualBody).isEqualTo(expectedBody);
     }
 
     @Test
@@ -112,11 +111,11 @@ public class HttpCursorFactoryTest {
 
         int bodyColumn = cursor.getColumnIndex("body");
         cursor.moveToFirst();
-        assertThat(cursor.getString(bodyColumn), is(expectedJsonOne));
+        assertThat(cursor.getString(bodyColumn)).isEqualTo(expectedJsonOne);
         cursor.moveToNext();
-        assertThat(cursor.getString(bodyColumn), is(expectedJsonTwo));
+        assertThat(cursor.getString(bodyColumn)).isEqualTo(expectedJsonTwo);
         cursor.moveToNext();
-        assertThat(cursor.getString(bodyColumn), is(expectedJsonThree));
+        assertThat(cursor.getString(bodyColumn)).isEqualTo(expectedJsonThree);
     }
 
 }
