@@ -19,8 +19,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @RunWith(RobolectricTestRunner.class)
 public class HiccupServiceTest {
 
-    private static final String ROUTE_ONE = "/path/to/collection";
-    private static final String ROUTE_TWO = "/path/to/collection/resource";
+    private static final String ROUTE_ONE = "path/to/collection";
+    private static final String ROUTE_TWO = "path/to/collection/resource";
     private static final String AUTHORITY = "com.authority.name";
     private static final String METHOD = "method";
 
@@ -50,6 +50,17 @@ public class HiccupServiceTest {
         verify(controllerMap).put(1, controller);
 
         hiccupService.newRoute(ROUTE_TWO, controller);
+        verify(uriMatcher).addURI(AUTHORITY, ROUTE_TWO, 2);
+        verify(controllerMap).put(2, controller);
+    }
+
+    @Test
+    public void addMultipleRoutesWithoutLeadingSlashToSupportPreJellyBeanMR2UriMatcher() {
+        hiccupService.newRoute("/" + ROUTE_ONE, controller);
+        verify(uriMatcher).addURI(AUTHORITY, ROUTE_ONE, 1);
+        verify(controllerMap).put(1, controller);
+
+        hiccupService.newRoute("/" + ROUTE_TWO, controller);
         verify(uriMatcher).addURI(AUTHORITY, ROUTE_TWO, 2);
         verify(controllerMap).put(2, controller);
     }

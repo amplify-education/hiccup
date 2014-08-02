@@ -21,7 +21,7 @@ public class HiccupService {
         this(authority, new UriMatcher(UriMatcher.NO_MATCH), new SparseArray<Controller>(), new HttpCursorFactory());
     }
 
-    protected HiccupService(String authority, UriMatcher uriMatcher, SparseArray<Controller> controllerMap,
+    HiccupService(String authority, UriMatcher uriMatcher, SparseArray<Controller> controllerMap,
                             HttpCursorFactory httpCursorFactory) {
         this.authority = authority;
         this.uriMatcher = uriMatcher;
@@ -31,7 +31,8 @@ public class HiccupService {
 
     public HiccupService newRoute(String path, Controller controller) {
         routeIdCounter++;
-        uriMatcher.addURI(authority, path, routeIdCounter);
+        String adjustedPath = removeLeadingSlashForUriMatcherPreJellyBeanMR2(path);
+        uriMatcher.addURI(authority, adjustedPath, routeIdCounter);
         controllerMap.put(routeIdCounter, controller);
         return this;
     }
@@ -59,5 +60,12 @@ public class HiccupService {
             throw new UnsupportedOperationException("Path does not match any route (" + uri.getPath() + ")");
         }
         return controllerMap.get(uriId);
+    }
+
+    private String removeLeadingSlashForUriMatcherPreJellyBeanMR2(String path) {
+        if (path.startsWith("/")) {
+            return path.substring(1);
+        }
+        return path;
     }
 }
