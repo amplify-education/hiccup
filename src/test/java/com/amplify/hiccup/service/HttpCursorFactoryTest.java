@@ -32,14 +32,14 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
-    public void shouldReturnEmptyCursorForNullResponse() {
+    public void returnEmptyCursorForNullResponse() {
         Cursor cursor = factory.createCursor(null);
 
         assertThat(cursor.getCount()).isEqualTo(0);
     }
 
     @Test
-    public void shouldConvertSingleModelIntoCursorWithSingleRow() {
+    public void convertSingleModelIntoCursorWithSingleRow() {
         when(response.getResults()).thenReturn(Arrays.asList(new Object()));
 
         Cursor cursor = factory.createCursor(response);
@@ -48,7 +48,7 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
-    public void shouldConvertMultipleModelsIntoCursorWithMultipleRows() {
+    public void convertMultipleModelsIntoCursorWithMultipleRows() {
         Iterable<Object> modelObjects = Arrays.asList(new Object(), new Object(), new Object());
         when(response.getResults()).thenReturn(modelObjects);
 
@@ -58,7 +58,7 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
-    public void shouldConvertSingleModelIntoCursorWithBaseColumnId() {
+    public void convertSingleModelIntoCursorWithBaseColumnId() {
         when(response.getResults()).thenReturn(Arrays.asList(new Object()));
 
         Cursor cursor = factory.createCursor(response);
@@ -69,7 +69,7 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
-    public void shouldConvertMultipleModelsIntoCursorWithIncrementingBaseColumnId() {
+    public void convertMultipleModelsIntoCursorWithIncrementingBaseColumnId() {
         List<Object> modelObjects = Arrays.asList(new Object(), new Object(), new Object());
         when(response.getResults()).thenReturn(modelObjects);
         Cursor cursor = factory.createCursor(response);
@@ -84,7 +84,7 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
-    public void shouldConvertSingleModelIntoCursorWithJsonBody() {
+    public void convertSingleModelIntoCursorWithJsonBody() {
         String expectedBody = "{\"aKey\" : \"some value\"}";
         Object modelObject = new Object();
         when(response.getResults()).thenReturn(Arrays.asList(modelObject));
@@ -99,7 +99,7 @@ public class HttpCursorFactoryTest {
     }
 
     @Test
-    public void shouldConvertMultipleModelsIntoCursorWithMultipleJsonBody() {
+    public void convertMultipleModelsIntoCursorWithMultipleJsonBody() {
         String expectedJsonOne = "{\"someKey\" : \"a value\"}";
         String expectedJsonTwo = "{\"anotherKey\" : \"another value!\"}";
         String expectedJsonThree = "{\"toBeSure\" : \"yet another value\"}";

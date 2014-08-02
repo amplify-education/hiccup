@@ -44,7 +44,7 @@ public class HiccupServiceTest {
     }
 
     @Test
-    public void shouldAddMultipleRoutes() {
+    public void addMultipleRoutes() {
         hiccupService.newRoute(ROUTE_ONE, controller);
         verify(uriMatcher).addURI(AUTHORITY, ROUTE_ONE, 1);
         verify(controllerMap).put(1, controller);
@@ -55,14 +55,14 @@ public class HiccupServiceTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void shouldThrowUnsupportedOperationExceptionForNonMatchingRoute() {
+    public void throwUnsupportedOperationExceptionForNonMatchingRoute() {
         when(uriMatcher.match(uri)).thenReturn(-1);
 
         hiccupService.delegateQuery(uri);
     }
 
     @Test
-    public void shouldDelegateGetRequestToMatchingControllerForRoute() {
+    public void delegateGetRequestToMatchingControllerForRoute() {
         Response response = mock(Response.class);
         Cursor expectedCursor = mock(Cursor.class);
         when(controllerMap.get(anyInt())).thenReturn(controller);
@@ -75,7 +75,7 @@ public class HiccupServiceTest {
     }
 
     @Test
-    public void shouldDelegatePostRequestToMatchingControllerForRoute() {
+    public void delegatePostRequestToMatchingControllerForRoute() {
         ContentValues contentValues = new ContentValues();
         contentValues.put("method", "POST");
         Uri expectedUri = mock(Uri.class);
@@ -88,7 +88,7 @@ public class HiccupServiceTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void shouldThrowUnsupportedOperationExceptionForUnknownMethod() {
+    public void throwUnsupportedOperationExceptionForUnknownMethod() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(METHOD, "ASDF");
 

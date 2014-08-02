@@ -42,7 +42,7 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void shouldMakeGetRequest() {
+    public void makeGetRequest() {
         Cursor expectedCursor = mock(Cursor.class);
         when(contentResolver.query(uri, null, null, null, null)).thenReturn(expectedCursor);
 
@@ -52,7 +52,7 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void shouldMakePostRequestWithPostMethod() {
+    public void makePostRequestWithPostMethod() {
         hiccupClient.post(uri, null);
 
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
@@ -62,7 +62,7 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void shouldIncludeBodyInPostRequest() {
+    public void includeBodyInPostRequest() {
         String body = "Lois, this is not my Batman glass.";
 
         hiccupClient.post(uri, body);
@@ -74,7 +74,7 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void shouldReturnUriFromPostRequest() {
+    public void returnUriFromPostRequest() {
         Uri expectedUri = mock(Uri.class);
         when(contentResolver.insert(eq(uri), any(ContentValues.class))).thenReturn(expectedUri);
 
