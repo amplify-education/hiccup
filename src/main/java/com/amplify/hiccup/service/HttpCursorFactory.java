@@ -1,38 +1,47 @@
 package com.amplify.hiccup.service;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.provider.BaseColumns;
 
 import java.util.Collections;
 
-public class HttpCursorFactory {
+public class HttpCursorFactory implements ContentAdapter<Object> {
 
     private static final String BODY_COLUMN = "body";
 
-    public Cursor createCursor(Response response) {
-        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, BODY_COLUMN});
-        if (response == null) {
-            return matrixCursor;
-        }
+    private final JsonConverter jsonConverter;
 
-        Iterable<Object> items = response.getResults();
+    public HttpCursorFactory(JsonConverter jsonConverter) {
+        this.jsonConverter = jsonConverter;
+    }
+
+    @Override
+    public Cursor createCursor(Iterable<Object> result) {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, BODY_COLUMN});
+        Iterable<Object> items = result;
         if (items == null) {
             items = Collections.emptyList();
         }
 
         for (Object item : items) {
-            addRowToCursor(matrixCursor, response, item);
+            addRowToCursor(matrixCursor, item);
         }
         return matrixCursor;
     }
 
-    private void addRowToCursor(MatrixCursor matrixCursor, Response response, Object model) {
+    @Override
+    public Object toModel(ContentValues contentValues, Class<?> modelClass) {
+        String body = contentValues.getAsString(BODY_COLUMN);
+        return jsonConverter.fromJson(body, modelClass);
+    }
+
+    private void addRowToCursor(MatrixCursor matrixCursor, Object model) {
         int currentSize = matrixCursor.getCount();
         matrixCursor.addRow(new Object[]{
                 currentSize + 1,
-                response.getBody(model)
+                jsonConverter.toJson(model)
         });
     }
-
 }
