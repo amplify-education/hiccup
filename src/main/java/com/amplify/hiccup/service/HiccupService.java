@@ -18,15 +18,14 @@ public class HiccupService {
     private int routeIdCounter;
 
     public HiccupService(String authority) {
-        this(authority, new UriMatcher(UriMatcher.NO_MATCH), new SparseArray<Controller>(), new HttpCursorFactory());
+        this(authority, new HttpCursorFactory());
     }
 
-    HiccupService(String authority, UriMatcher uriMatcher, SparseArray<Controller> controllerMap,
-                            HttpCursorFactory httpCursorFactory) {
+    HiccupService(String authority, HttpCursorFactory httpCursorFactory) {
         this.authority = authority;
-        this.uriMatcher = uriMatcher;
-        this.controllerMap = controllerMap;
         this.httpCursorFactory = httpCursorFactory;
+        this.uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        this.controllerMap = new SparseArray<Controller>();
     }
 
     public HiccupService newRoute(String path, Controller controller) {
@@ -48,13 +47,12 @@ public class HiccupService {
         String method = contentValues.getAsString(METHOD);
         if ("POST".equals(method)) {
             return controller.post(uri, contentValues);
-        }
-        else {
+        } else {
             throw new UnsupportedOperationException("Unsupported Http method (" + method + ")");
         }
     }
 
-    private Controller getController(Uri uri) {
+    Controller getController(Uri uri) {
         int uriId = uriMatcher.match(uri);
         if (uriId == -1) {
             throw new UnsupportedOperationException("Path does not match any route (" + uri.getPath() + ")");
