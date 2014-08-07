@@ -19,9 +19,9 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(RobolectricTestRunner.class)
-public class HttpCursorFactoryTest {
+public class HttpContentAdapterTest {
 
-    private HttpCursorFactory factory;
+    private HttpContentAdapter factory;
 
     @Mock
     private JsonConverter jsonConverter;
@@ -30,7 +30,7 @@ public class HttpCursorFactoryTest {
     public void setUp() {
         initMocks(this);
 
-        factory = new HttpCursorFactory(jsonConverter);
+        factory = new HttpContentAdapter(jsonConverter);
     }
 
     @Test

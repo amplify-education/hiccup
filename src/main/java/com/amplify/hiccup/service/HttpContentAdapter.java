@@ -7,13 +7,13 @@ import android.provider.BaseColumns;
 
 import java.util.Collections;
 
-public class HttpCursorFactory implements ContentAdapter<Object> {
+public class HttpContentAdapter implements ContentAdapter<Object> {
 
     private static final String BODY_COLUMN = "body";
 
     private final JsonConverter jsonConverter;
 
-    public HttpCursorFactory(JsonConverter jsonConverter) {
+    public HttpContentAdapter(JsonConverter jsonConverter) {
         this.jsonConverter = jsonConverter;
     }
 
