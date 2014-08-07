@@ -3,6 +3,7 @@ package com.amplify.hiccup.service;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.provider.BaseColumns;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.util.Lists.newArrayList;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -21,7 +21,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @RunWith(RobolectricTestRunner.class)
 public class HttpContentAdapterTest {
 
-    private HttpContentAdapter factory;
+    private HttpContentAdapter httpContentAdapter;
 
     @Mock
     private JsonConverter jsonConverter;
@@ -30,12 +30,12 @@ public class HttpContentAdapterTest {
     public void setUp() {
         initMocks(this);
 
-        factory = new HttpContentAdapter(jsonConverter);
+        httpContentAdapter = new HttpContentAdapter(jsonConverter);
     }
 
     @Test
-    public void returnEmptyCursorForNullResponse() {
-        Cursor cursor = factory.createCursor(null);
+    public void returnEmptyCursorForNullResult() {
+        Cursor cursor = httpContentAdapter.toCursor(null);
 
         assertThat(cursor.getCount()).isEqualTo(0);
     }
@@ -44,7 +44,7 @@ public class HttpContentAdapterTest {
     public void convertSingleModelIntoCursorWithSingleRow() {
         Iterable<Object> result = Arrays.asList(new Object());
 
-        Cursor cursor = factory.createCursor(result);
+        Cursor cursor = httpContentAdapter.toCursor(result);
 
         assertThat(cursor.getCount()).isEqualTo(1);
     }
@@ -53,7 +53,7 @@ public class HttpContentAdapterTest {
     public void convertMultipleModelsIntoCursorWithMultipleRows() {
         Iterable<Object> result = Arrays.asList(new Object(), new Object(), new Object());
 
-        Cursor cursor = factory.createCursor(result);
+        Cursor cursor = httpContentAdapter.toCursor(result);
 
         assertThat(cursor.getCount()).isEqualTo(3);
     }
@@ -62,7 +62,7 @@ public class HttpContentAdapterTest {
     public void convertSingleModelIntoCursorWithBaseColumnId() {
         Iterable<Object> result = Arrays.asList(new Object());
 
-        Cursor cursor = factory.createCursor(result);
+        Cursor cursor = httpContentAdapter.toCursor(result);
 
         int idColumn = cursor.getColumnIndex(BaseColumns._ID);
         cursor.moveToFirst();
@@ -72,7 +72,8 @@ public class HttpContentAdapterTest {
     @Test
     public void convertMultipleModelsIntoCursorWithIncrementingBaseColumnId() {
         List<Object> result = Arrays.asList(new Object(), new Object(), new Object());
-        Cursor cursor = factory.createCursor(result);
+
+        Cursor cursor = httpContentAdapter.toCursor(result);
 
         int idColumn = cursor.getColumnIndex(BaseColumns._ID);
         cursor.moveToFirst();
@@ -85,12 +86,12 @@ public class HttpContentAdapterTest {
 
     @Test
     public void convertSingleModelIntoCursorWithJsonBody() {
-        String expectedBody = "{\"aKey\" : \"some value\"}";
+        String expectedBody = "{\"a_key\" : \"some value\"}";
         Object modelObject = new Object();
         Iterable<Object> result = Arrays.asList(modelObject);
         when(jsonConverter.toJson(modelObject)).thenReturn(expectedBody);
 
-        Cursor cursor = factory.createCursor(result);
+        Cursor cursor = httpContentAdapter.toCursor(result);
 
         int bodyColumn = cursor.getColumnIndex("body");
         cursor.moveToFirst();
@@ -100,21 +101,21 @@ public class HttpContentAdapterTest {
 
     @Test
     public void convertMultipleModelsIntoCursorWithMultipleJsonBody() {
-        String expectedJsonOne = "{\"someKey\" : \"a value\"}";
-        String expectedJsonTwo = "{\"anotherKey\" : \"another value!\"}";
-        String expectedJsonThree = "{\"toBeSure\" : \"yet another value\"}";
+        String expectedJsonOne = "{\"some_key\" : \"a value\"}";
+        String expectedJsonTwo = "{\"another_key\" : \"another value!\"}";
+        String expectedJsonThree = "{\"to_be_sure\" : \"yet another value\"}";
         Iterable<Object> result = Arrays.asList(new Object(), new Object(), new Object());
         when(jsonConverter.toJson(anyObject())).thenReturn(expectedJsonOne, expectedJsonTwo, expectedJsonThree);
 
-        Cursor cursor = factory.createCursor(result);
+        Cursor cursor = httpContentAdapter.toCursor(result);
 
-        int bodyColumn = cursor.getColumnIndex("body");
+        int bodyColumnIndex = cursor.getColumnIndex("body");
         cursor.moveToFirst();
-        assertThat(cursor.getString(bodyColumn)).isEqualTo(expectedJsonOne);
+        assertThat(cursor.getString(bodyColumnIndex)).isEqualTo(expectedJsonOne);
         cursor.moveToNext();
-        assertThat(cursor.getString(bodyColumn)).isEqualTo(expectedJsonTwo);
+        assertThat(cursor.getString(bodyColumnIndex)).isEqualTo(expectedJsonTwo);
         cursor.moveToNext();
-        assertThat(cursor.getString(bodyColumn)).isEqualTo(expectedJsonThree);
+        assertThat(cursor.getString(bodyColumnIndex)).isEqualTo(expectedJsonThree);
     }
 
     @Test
@@ -124,10 +125,11 @@ public class HttpContentAdapterTest {
         DomainModelTest expectedModel = new DomainModelTest();
         when(jsonConverter.fromJson("some json goes here", DomainModelTest.class)).thenReturn(expectedModel);
 
-        Object actualModel = factory.toModel(contentValues, DomainModelTest.class);
+        Object actualModel = httpContentAdapter.toModel(contentValues, DomainModelTest.class);
 
         assertThat(actualModel).isEqualTo(expectedModel);
     }
 
-    private static class DomainModelTest {}
+    private static class DomainModelTest {
+    }
 }

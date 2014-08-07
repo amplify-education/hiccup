@@ -75,7 +75,7 @@ public class HiccupServiceTest {
         Cursor expectedCursor = mock(Cursor.class);
         hiccupService.newRoute(ROUTE_ONE_PATH, null, controller1);
         when(controller1.get(ROUTE_ONE_URI)).thenReturn(result);
-        when(contentAdapter.createCursor(result)).thenReturn(expectedCursor);
+        when(contentAdapter.toCursor(result)).thenReturn(expectedCursor);
 
         Cursor actualCursor = hiccupService.delegateQuery(ROUTE_ONE_URI);
 

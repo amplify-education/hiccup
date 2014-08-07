@@ -18,7 +18,7 @@ public class HttpContentAdapter implements ContentAdapter<Object> {
     }
 
     @Override
-    public Cursor createCursor(Iterable<Object> result) {
+    public Cursor toCursor(Iterable<Object> result) {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, BODY_COLUMN});
         Iterable<Object> items = result;
         if (items == null) {

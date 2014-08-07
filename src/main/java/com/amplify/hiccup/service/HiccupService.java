@@ -37,7 +37,7 @@ public class HiccupService {
         ControllerInfo controllerInfo = getControllerInfo(uri);
         Controller controller = controllerInfo.controller;
         Iterable result = controller.get(uri);
-        return contentAdapter.createCursor(result);
+        return contentAdapter.toCursor(result);
     }
 
     public Uri delegateInsert(Uri uri, ContentValues contentValues) {
