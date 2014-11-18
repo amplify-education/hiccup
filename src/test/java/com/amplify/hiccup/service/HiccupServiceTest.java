@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.util.Lists.newArrayList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,7 +29,7 @@ public class HiccupServiceTest {
     private HiccupService hiccupService;
 
     @Mock
-    private Controller<DomainModelTest> controller1;
+    private Controller controller1;
     @Mock
     private Controller controller2;
     @Mock
@@ -39,13 +38,13 @@ public class HiccupServiceTest {
     @Before
     public void setUp() {
         initMocks(this);
-        hiccupService = new HiccupService(AUTHORITY, contentAdapter);
+        hiccupService = new HiccupService(AUTHORITY);
     }
 
     @Test
     public void addMultipleRoutes() {
-        hiccupService.newRoute(ROUTE_ONE_PATH, null, controller1);
-        hiccupService.newRoute(ROUTE_TWO_PATH, null, controller2);
+        hiccupService.newRoute(ROUTE_ONE_PATH, controller1);
+        hiccupService.newRoute(ROUTE_TWO_PATH, controller2);
 
         Controller actualController1 = hiccupService.getControllerInfo(ROUTE_ONE_URI).controller;
         Controller actualController2 = hiccupService.getControllerInfo(ROUTE_TWO_URI).controller;
@@ -55,8 +54,8 @@ public class HiccupServiceTest {
 
     @Test
     public void addMultipleRoutesWithoutLeadingSlashToSupportPreJellyBeanMR2UriMatcher() {
-        hiccupService.newRoute("/" + ROUTE_ONE_PATH, null, controller1);
-        hiccupService.newRoute("/" + ROUTE_TWO_PATH, null, controller2);
+        hiccupService.newRoute("/" + ROUTE_ONE_PATH, controller1);
+        hiccupService.newRoute("/" + ROUTE_TWO_PATH, controller2);
 
         Controller actualController1 = hiccupService.getControllerInfo(ROUTE_ONE_URI).controller;
         Controller actualController2 = hiccupService.getControllerInfo(ROUTE_TWO_URI).controller;
@@ -71,11 +70,9 @@ public class HiccupServiceTest {
 
     @Test
     public void delegateGetRequestToMatchingControllerForRoute() {
-        Iterable result = newArrayList();
         Cursor expectedCursor = mock(Cursor.class);
-        hiccupService.newRoute(ROUTE_ONE_PATH, null, controller1);
-        when(controller1.get(ROUTE_ONE_URI)).thenReturn(result);
-        when(contentAdapter.toCursor(result)).thenReturn(expectedCursor);
+        hiccupService.newRoute(ROUTE_ONE_PATH, controller1);
+        when(controller1.get(ROUTE_ONE_URI)).thenReturn(expectedCursor);
 
         Cursor actualCursor = hiccupService.delegateQuery(ROUTE_ONE_URI);
 
@@ -84,16 +81,14 @@ public class HiccupServiceTest {
 
     @Test
     public void delegatePostRequestToMatchingControllerForRoute() {
-        hiccupService.newRoute(ROUTE_ONE_PATH, DomainModelTest.class, controller1);
+        hiccupService.newRoute(ROUTE_ONE_PATH, controller1);
         ContentValues contentValues = contentValuesForPost();
-        DomainModelTest domainModel  = new DomainModelTest();
         Uri expectedUri = mock(Uri.class);
-        when(controller1.post(ROUTE_ONE_URI, domainModel)).thenReturn(expectedUri);
-        when(contentAdapter.toModel(contentValues, DomainModelTest.class)).thenReturn(domainModel);
+        when(controller1.post(ROUTE_ONE_URI, contentValues)).thenReturn(expectedUri);
 
         Uri actualUri = hiccupService.delegateInsert(ROUTE_ONE_URI, contentValues);
 
-        verify(controller1).post(ROUTE_ONE_URI, domainModel);
+        verify(controller1).post(ROUTE_ONE_URI, contentValues);
         assertThat(actualUri).isEqualTo(expectedUri);
     }
 

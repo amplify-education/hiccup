@@ -8,27 +8,23 @@ import android.util.SparseArray;
 
 public class HiccupService {
 
-    private static final String METHOD = "method";
-
     private final String authority;
-    private final ContentAdapter contentAdapter;
     private final UriMatcher uriMatcher;
     private final SparseArray<ControllerInfo> controllerMap;
 
     private int routeIdCounter;
 
-    public HiccupService(String authority, ContentAdapter contentAdapter) {
+    public HiccupService(String authority) {
         this.authority = authority;
-        this.contentAdapter = contentAdapter;
         this.uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         this.controllerMap = new SparseArray<ControllerInfo>();
     }
 
-    public <R> HiccupService newRoute(String path, Class<R> modelClass, Controller<R> controller) {
+    public HiccupService newRoute(String path, Controller controller) {
         routeIdCounter++;
         String adjustedPath = removeLeadingSlashForUriMatcherPreJellyBeanMR2(path);
         uriMatcher.addURI(authority, adjustedPath, routeIdCounter);
-        ControllerInfo controllerInfo = new ControllerInfo(controller, modelClass);
+        ControllerInfo controllerInfo = new ControllerInfo(controller);
         controllerMap.put(routeIdCounter, controllerInfo);
         return this;
     }
@@ -36,21 +32,13 @@ public class HiccupService {
     public Cursor delegateQuery(Uri uri) {
         ControllerInfo controllerInfo = getControllerInfo(uri);
         Controller controller = controllerInfo.controller;
-        Iterable result = controller.get(uri);
-        return contentAdapter.toCursor(result);
+        return controller.get(uri);
     }
 
     public Uri delegateInsert(Uri uri, ContentValues contentValues) {
         ControllerInfo controllerInfo = getControllerInfo(uri);
         Controller controller = controllerInfo.controller;
-        Class<?> modelClass = controllerInfo.modelClass;
-        Object model = contentAdapter.toModel(contentValues, modelClass);
-        String method = contentValues.getAsString(METHOD);
-        if ("POST".equals(method)) {
-            return controller.post(uri, model);
-        } else {
-            throw new UnsupportedOperationException("Unsupported Http method (" + method + ")");
-        }
+        return controller.post(uri, contentValues);
     }
 
     ControllerInfo getControllerInfo(Uri uri) {
@@ -70,11 +58,9 @@ public class HiccupService {
 
     static class ControllerInfo {
         final Controller controller;
-        final Class<?> modelClass;
 
-        public ControllerInfo(Controller controller, Class<?> modelClass) {
+        public ControllerInfo(Controller controller) {
             this.controller = controller;
-            this.modelClass = modelClass;
         }
     }
 }
