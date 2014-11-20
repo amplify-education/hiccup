@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.provider.BaseColumns;
 
+import com.amplify.hiccup.shared.JsonConverter;
+
 import java.util.Collections;
 
 public class HttpContentAdapter implements ContentAdapter<Object> {

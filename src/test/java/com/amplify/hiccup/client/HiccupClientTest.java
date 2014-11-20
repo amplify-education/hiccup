@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,14 +15,15 @@ import org.robolectric.RobolectricTestRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(RobolectricTestRunner.class)
 public class HiccupClientTest {
-
-    private static final String METHOD = "method";
-    private static final String BODY = "body";
 
     private HiccupClient hiccupClient;
 
@@ -30,19 +32,22 @@ public class HiccupClientTest {
     @Mock
     private ContentResolver contentResolver;
     @Mock
+    private RequestAdapter requestAdapter;
+
     private Uri uri;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
 
+        uri = Uri.parse("content://com.fake.authority/some/fake/path");
         given(context.getContentResolver()).willReturn(contentResolver);
 
-        hiccupClient = new HiccupClient(context);
+        hiccupClient = new HiccupClient(context, requestAdapter);
     }
 
     @Test
-    public void makeGetRequest() {
+    public void queryUriOnGetRequest() {
         Cursor expectedCursor = mock(Cursor.class);
         when(contentResolver.query(uri, null, null, null, null)).thenReturn(expectedCursor);
 
@@ -52,25 +57,17 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void makePostRequestWithPostMethod() {
-        hiccupClient.post(uri, null);
+    public void insertContentValuesFromDomainModelOnPostRequest() {
+        Object model = new Object();
+        ContentValues expectedContentValues = new ContentValues();
+        when(requestAdapter.toValues(model)).thenReturn(expectedContentValues);
+
+        hiccupClient.post(uri, model);
 
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
         verify(contentResolver).insert(eq(uri), captor.capture());
-        ContentValues contentValues = captor.getValue();
-        assertThat(contentValues.getAsString(METHOD)).isEqualTo("POST");
-    }
-
-    @Test
-    public void includeBodyInPostRequest() {
-        String body = "Lois, this is not my Batman glass.";
-
-        hiccupClient.post(uri, body);
-
-        ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
-        verify(contentResolver).insert(eq(uri), captor.capture());
-        ContentValues contentValues = captor.getValue();
-        assertThat(contentValues.getAsString(BODY)).isEqualTo(body);
+        ContentValues actualContentValues = captor.getValue();
+        assertThat(actualContentValues).isEqualTo(expectedContentValues);
     }
 
     @Test

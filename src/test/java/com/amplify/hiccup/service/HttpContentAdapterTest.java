@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 
+import com.amplify.hiccup.shared.JsonConverter;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

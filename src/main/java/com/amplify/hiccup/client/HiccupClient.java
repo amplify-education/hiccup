@@ -7,23 +7,20 @@ import android.net.Uri;
 
 public class HiccupClient {
 
-    private static final String METHOD = "method";
-    private static final String BODY = "body";
-
     private final Context context;
+    private final RequestAdapter requestAdapter;
 
-    public HiccupClient(Context context) {
+    public HiccupClient(Context context, RequestAdapter requestAdapter) {
         this.context = context;
+        this.requestAdapter = requestAdapter;
     }
 
     public Cursor get(Uri uri) {
         return context.getContentResolver().query(uri, null, null, null, null);
     }
 
-    public Uri post(Uri uri, String body) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(METHOD, "POST");
-        contentValues.put(BODY, body);
+    public Uri post(Uri uri, Object object) {
+        ContentValues contentValues = requestAdapter.toValues(object);
         return context.getContentResolver().insert(uri, contentValues);
     }
 }
