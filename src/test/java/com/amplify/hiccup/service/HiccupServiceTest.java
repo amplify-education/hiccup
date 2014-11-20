@@ -62,9 +62,14 @@ public class HiccupServiceTest {
         assertThat(actualController2).isEqualTo(controller2);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void throwUnsupportedOperationExceptionForNonMatchingRoute() {
-        hiccupService.delegateQuery(Uri.parse("content://com.fake.authority/some/fake/path"));
+    @Test(expected = IllegalArgumentException.class)
+    public void throwIllegalArgumentExceptionForNonMatchingRouteWhenDelegatingQuery() {
+        hiccupService.delegateQuery(Uri.parse("content://com.fake.authority/some/fake/query/path"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void throwIllegalArgumentExceptionForNonMatchingRouteWhenDelegatingInsert() {
+        hiccupService.delegateInsert(Uri.parse("content://com.fake.authority/some/fake/insert/path"), new ContentValues());
     }
 
     @Test

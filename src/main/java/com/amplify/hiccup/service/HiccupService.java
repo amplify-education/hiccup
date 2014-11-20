@@ -44,7 +44,7 @@ public class HiccupService {
     ControllerInfo getControllerInfo(Uri uri) {
         int uriId = uriMatcher.match(uri);
         if (uriId == -1) {
-            throw new UnsupportedOperationException("Path does not match any route (" + uri.getPath() + ")");
+            throw new IllegalArgumentException("Path does not match any route (" + uri.getPath() + ")");
         }
         return controllerMap.get(uriId);
     }
