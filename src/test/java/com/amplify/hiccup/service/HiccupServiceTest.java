@@ -24,7 +24,6 @@ public class HiccupServiceTest {
     private static final String ROUTE_TWO_PATH = "path/to/collection/resource";
     private static final Uri ROUTE_ONE_URI = Uri.parse("content://" + AUTHORITY + "/" + ROUTE_ONE_PATH);
     private static final Uri ROUTE_TWO_URI = Uri.parse("content://" + AUTHORITY + "/" + ROUTE_TWO_PATH);
-    private static final String METHOD = "method";
 
     private HiccupService hiccupService;
 
@@ -33,7 +32,7 @@ public class HiccupServiceTest {
     @Mock
     private Controller controller2;
     @Mock
-    private ContentAdapter<DomainModelTest> contentAdapter;
+    private ContentAdapter<SomeDomainModel> contentAdapter;
 
     @Before
     public void setUp() {
@@ -82,7 +81,7 @@ public class HiccupServiceTest {
     @Test
     public void delegatePostRequestToMatchingControllerForRoute() {
         hiccupService.newRoute(ROUTE_ONE_PATH, controller1);
-        ContentValues contentValues = contentValuesForPost();
+        ContentValues contentValues = new ContentValues();
         Uri expectedUri = mock(Uri.class);
         when(controller1.post(ROUTE_ONE_URI, contentValues)).thenReturn(expectedUri);
 
@@ -92,19 +91,5 @@ public class HiccupServiceTest {
         assertThat(actualUri).isEqualTo(expectedUri);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void throwUnsupportedOperationExceptionForUnknownMethod() {
-        ContentValues contentValues = contentValuesForPost();
-        contentValues.put(METHOD, "ASDF");
-
-        hiccupService.delegateInsert(ROUTE_ONE_URI, contentValues);
-    }
-
-    private ContentValues contentValuesForPost() {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("method", "POST");
-        return contentValues;
-    }
-
-    private static class DomainModelTest {}
+    private static class SomeDomainModel {}
 }
