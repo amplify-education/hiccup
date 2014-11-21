@@ -19,8 +19,8 @@ Android's ContentProvider is a great tool for data abstraction and sharing,
 but its interface is confusing and has several limitations. Mainly, its
 interface is half REST and half SQL, which result in the following:
 
-1. clients (via ContentResolver) are forced to know underlying db schema via sql projections, where clauses, etc.
-1. as a result, restructuring tables (data normalization) breaks client code
+1. clients (ie, ContentResolver) are forced to know underlying db schema via sql projections, where clauses, etc.
+1. restructuring tables (data normalization) breaks client code
 1. table joins are difficult to support when using uri's + sql
 1. difficult to represent complex models in flat maps (Cursor or ContentValues)
 1. assumes SQL backend (ie, does not easily support NOSQL, file, shared pref, etc.)
@@ -29,10 +29,11 @@ Hiccup tries to overcome these challenges.
 
 ## Usage
 
-#### Client side (CursorAdapter)
-In this example, let's assume we have used a CursorLoader that made a RESTful request to ``content://com.your.authority/categories/52/products?sort=name``.
-We get back a Cursor, which has an **_id** (for adapters) and **body**, which in this example
-is JSON of our domain models. Now we can bind our views simply using those domain models.
+#### CursorAdapter renders UI from response
+In this example, let's assume our Activity uses a CursorLoader to make a RESTful request to
+``content://com.your.authority/categories/52/products?sort=name``. We get back a Cursor,
+which has an **_id** (for CursorAdapters) and **body**, which is the JSON "response" of our
+domain models. After deserializing, we can bind our views simply using those domain models.
 
 ```Java
 @Override
@@ -47,15 +48,15 @@ public void bindView(View view, Context context, Cursor cursor) {
 }
 ```
 
-#### Server side (ContentProvider)
+#### ContentProvider acts as a server to delegate requests
 
-Here, we init Hiccup service, create routes, and delegate to controllers.
+Here, we init Hiccup service and create routes that delegate to Controllers.
 
 ```Java
 @Override
 public boolean onCreate() {
     super.onCreate();
-    // ContentAdapters let us define how domain models are converted into a response.
+    // ContentAdapters let us define how domain models are converted into a Cursor
     ContentAdapter contentAdapter = new HttpContentAdapter(myJsonParser);
     hiccupService = new HiccupService("com.your.authority")
             .newRoute("categories/#/products", new ProductsCollectionController(contentAdapter));
@@ -64,12 +65,12 @@ public boolean onCreate() {
 @Override
 public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                     String sortOrder) {
-    // Delegate GET request to controller based on route
+    // Hiccup service delegates request to Controller based on route
     return hiccupService.delegateQuery(uri);
 }
 ```
 
-#### Server side (Controller)
+#### Controller finds or modifies resources
 
 This controller is responsible for the products collection for the route: _categories/#/products_.
 
