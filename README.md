@@ -2,26 +2,27 @@
 
 Hiccup is an Android library that layers _Http In ContentProviders_.
 
-It aims to bring RESTful and MVC-like concepts to ContentProviders to separate client/server concerns, simplify app
-client access, and improve code maintainability. A ContentProvider is essentially a server, so the idea is that we
-can treat it like one and use some well-established best practices.
+It aims to bring RESTful and MVC-like concepts to ContentProviders to separate client/server concerns,
+allow UI/data layers to evolve independently, and improve code maintainability. A ContentProvider is like
+a locally running server, so the idea is that we can treat it like one and borrow some best practices from
+the web.
 
 #### Status
 Alpha, work in progress. Use at your own discretion. Currently supports:
 
 1. GET requests
-2. POST requests
+1. POST requests
 
 #### Motivation
 
-Android's ContentProvider is a great tool for data abstraction and sharing.
-But the provided interface poses some unintended challenges & limitations.
-It is half REST and half SQL, which result in the following:
+Android's ContentProvider is a great tool for data abstraction and sharing,
+but its interface is confusing and has several limitations. Mainly, its
+interface is half REST and half SQL, which result in the following:
 
-1. exposes underlying db representation to clients
-1. table joins are difficult to support when using uri's
-1. difficult to represent complex models in flat map of Cursor results or ContentValues
-1. restructuring tables (data normalization) breaks client code
+1. clients (via ContentResolver) are forced to know underlying db schema via sql projections, where clauses, etc.
+1. as a result, restructuring tables (data normalization) breaks client code
+1. table joins are difficult to support when using uri's + sql
+1. difficult to represent complex models in flat maps (Cursor or ContentValues)
 1. assumes SQL backend (ie, does not easily support NOSQL, file, shared pref, etc.)
 
 Hiccup tries to overcome these challenges.
@@ -29,19 +30,20 @@ Hiccup tries to overcome these challenges.
 ## Usage
 
 #### Client side (CursorAdapter)
-In this example, let's assume we have used a CursorLoader to make a REST request to ``content://com.your.authority/categories/52/products?sort=name``.
-We get back an HttpCursor, which has an **_id** (for adapters) and **body**, which in this example is JSON of our domain models.
-Now we can bind our views using those domain models.
+In this example, let's assume we have used a CursorLoader that made a RESTful request to ``content://com.your.authority/categories/52/products?sort=name``.
+We get back a Cursor, which has an **_id** (for adapters) and **body**, which in this example
+is JSON of our domain models. Now we can bind our views simply using those domain models.
 
 ```Java
 @Override
 public void bindView(View view, Context context, Cursor cursor) {
     int bodyIndex = cursor.getColumnIndex("body");
     String body = cursor.getString(bodyIndex);
-    Product product = new Gson().fromJson(body, Product.class);
+    Product product = myJsonParser.fromJson(body, Product.class);
 
     TextView productNameView = (TextView) view.findViewById(R.id.product_name);
     productNameView.setText(product.name());
+    productPriceView.setText(product.price());
 }
 ```
 
@@ -53,8 +55,10 @@ Here, we init Hiccup service, create routes, and delegate to controllers.
 @Override
 public boolean onCreate() {
     super.onCreate();
+    // ContentAdapters let us define how domain models are converted into a response.
+    ContentAdapter contentAdapter = new HttpContentAdapter(myJsonParser);
     hiccupService = new HiccupService("com.your.authority")
-            .newRoute("categories/#/products", new ProductsCollectionController());
+            .newRoute("categories/#/products", new ProductsCollectionController(contentAdapter));
 }
 
 @Override
@@ -70,30 +74,22 @@ public Cursor query(Uri uri, String[] projection, String selection, String[] sel
 This controller is responsible for the products collection for the route: _categories/#/products_.
 
 ```Java
-public class ProductsCollectionController implements Controller {
-    // constructor, etc...
+public class ProductsCollectionController extends AbstractController<Product> {
+
+    public ProductsCollectionController(ContentAdapter<Product> contentAdapter) {
+        super(contentAdapter, Product.class);
+        // set some other variables...
+    }
+
     @Override
-    public Response<Product> get(Uri uri) {
+    public Iterable<Product> handleGet(Uri uri) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String categoryId = uri.getPathSegments().get(1);
         String sort = uri.getQueryParameter("sort");
         Cursor productsCursor = findProductsByCategory(db, categoryId, sort);
 
         // Convert our SQLiteCursor to list of domain models/POJOs
-        final List<Product> products = convertCursorToProducts(productsCursor);
-
-        // Return a Response, which lets us define how the body of each result model
-        // is generated in the HttpCursor that Hiccup will return from this query
-        return new Response<Product>() {
-            @Override
-            public Iterable<Product> getResults() {
-                return products;
-            }
-            @Override
-            public String getBody(Product model) {
-                return jsonConverter.toJson(model);
-            }
-        };
+        return convertCursorToProducts(productsCursor);
     }
 
     private Cursor findProductsByCategory(SQLiteDatabase db, String categoryId, String sort) {
@@ -103,4 +99,3 @@ public class ProductsCollectionController implements Controller {
     }
 }
 ```
-
