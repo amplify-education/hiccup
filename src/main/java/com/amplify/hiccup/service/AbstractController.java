@@ -32,7 +32,13 @@ public abstract class AbstractController<R> implements Controller {
         return handlePut(uri, model);
     }
 
+    @Override
+    public final int delete(Uri uri) {
+        return handleDelete(uri);
+    }
+
     protected abstract Iterable<R> handleGet(Uri uri);
     protected abstract Uri handlePost(Uri uri, R model);
     protected abstract int handlePut(Uri uri, R model);
+    protected abstract int handleDelete(Uri uri);
 }

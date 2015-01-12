@@ -105,4 +105,21 @@ public class HiccupClientTest {
         assertThat(actualCount).isEqualTo(expectedCount);
     }
 
+    @Test
+    public void deleteUriForDeleteRequest() {
+        hiccupClient.delete(uri);
+
+        verify(contentResolver).delete(eq(uri), eq((String) null), eq((String[]) null));
+    }
+
+    @Test
+    public void returnDeletedRowsFromDeleteRequest() {
+        int expectedCount = 456;
+        when(contentResolver.delete(eq(uri), eq((String) null), eq((String[]) null))).thenReturn(expectedCount);
+
+        int actualCount = hiccupClient.delete(uri);
+
+        assertThat(actualCount).isEqualTo(expectedCount);
+    }
+
 }

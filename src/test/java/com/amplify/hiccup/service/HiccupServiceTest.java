@@ -109,5 +109,17 @@ public class HiccupServiceTest {
         assertThat(actualCount).isEqualTo(expectedCount);
     }
 
+    @Test
+    public void delegateDeleteRequestToMatchingControllerForRoute() {
+        hiccupService.newRoute(ROUTE_ONE_PATH, controller1);
+        int expectedCount = 37;
+        when(controller1.delete(ROUTE_ONE_URI)).thenReturn(expectedCount);
+
+        int actualCount = hiccupService.delegateDelete(ROUTE_ONE_URI);
+
+        verify(controller1).delete(ROUTE_ONE_URI);
+        assertThat(actualCount).isEqualTo(expectedCount);
+    }
+
     private static class SomeDomainModel {}
 }

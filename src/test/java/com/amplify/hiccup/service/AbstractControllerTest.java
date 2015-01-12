@@ -85,6 +85,15 @@ public class AbstractControllerTest {
         verify(abstractControllerSpy).handlePut(Uri.parse("/some/path/here"), expectedModel);
     }
 
+    @Test
+    public void invokeSubclassDeleteHandlerOnDelete() {
+        AbstractController abstractControllerSpy = spy(abstractController);
+
+        abstractControllerSpy.delete(Uri.parse("/any/path/will/do"));
+
+        verify(abstractControllerSpy).handleDelete(Uri.parse("/any/path/will/do"));
+    }
+
     private static class AbstractControllerImpl extends AbstractController<Object> {
 
         public AbstractControllerImpl(ContentAdapter contentAdapter, Class<Object> modelClass) {
@@ -103,6 +112,11 @@ public class AbstractControllerTest {
 
         @Override
         protected int handlePut(Uri uri, Object model) {
+            return 0;
+        }
+
+        @Override
+        protected int handleDelete(Uri uri) {
             return 0;
         }
     }

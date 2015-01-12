@@ -47,6 +47,12 @@ public class HiccupService {
         return controller.put(uri, contentValues);
     }
 
+    public int delegateDelete(Uri uri) {
+        ControllerInfo controllerInfo = getControllerInfo(uri);
+        Controller controller = controllerInfo.controller;
+        return controller.delete(uri);
+    }
+
     ControllerInfo getControllerInfo(Uri uri) {
         int uriId = uriMatcher.match(uri);
         if (uriId == -1) {

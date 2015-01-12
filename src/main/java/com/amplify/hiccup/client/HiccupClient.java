@@ -28,4 +28,8 @@ public class HiccupClient {
         ContentValues contentValues = requestAdapter.toValues(object);
         return context.getContentResolver().update(uri, contentValues, null, null);
     }
+
+    public int delete(Uri uri) {
+        return context.getContentResolver().delete(uri, null, null);
+    }
 }
