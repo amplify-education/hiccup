@@ -96,5 +96,18 @@ public class HiccupServiceTest {
         assertThat(actualUri).isEqualTo(expectedUri);
     }
 
+    @Test
+    public void delegatePutRequestToMatchingControllerForRoute() {
+        hiccupService.newRoute(ROUTE_ONE_PATH, controller1);
+        ContentValues contentValues = new ContentValues();
+        int expectedCount = 42;
+        when(controller1.put(ROUTE_ONE_URI, contentValues)).thenReturn(expectedCount);
+
+        int actualCount = hiccupService.delegateUpdate(ROUTE_ONE_URI, contentValues);
+
+        verify(controller1).put(ROUTE_ONE_URI, contentValues);
+        assertThat(actualCount).isEqualTo(expectedCount);
+    }
+
     private static class SomeDomainModel {}
 }

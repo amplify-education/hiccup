@@ -26,6 +26,13 @@ public abstract class AbstractController<R> implements Controller {
         return handlePost(uri, model);
     }
 
+    @Override
+    public final int put(Uri uri, ContentValues contentValues) {
+        R model = (R) contentAdapter.toModel(contentValues, modelClass);
+        return handlePut(uri, model);
+    }
+
     protected abstract Iterable<R> handleGet(Uri uri);
     protected abstract Uri handlePost(Uri uri, R model);
+    protected abstract int handlePut(Uri uri, R model);
 }

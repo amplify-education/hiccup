@@ -79,4 +79,30 @@ public class HiccupClientTest {
 
         assertThat(actualUri).isEqualTo(expectedUri);
     }
+
+    @Test
+    public void updateContentValuesFromDomainModelOnPutRequest() {
+        Object model = new Object();
+        ContentValues expectedContentValues = new ContentValues();
+        expectedContentValues.put("test", "value");
+        when(requestAdapter.toValues(model)).thenReturn(expectedContentValues);
+
+        hiccupClient.put(uri, model);
+
+        ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
+        verify(contentResolver).update(eq(uri), captor.capture(), eq((String) null), eq((String[]) null));
+        ContentValues actualContentValues = captor.getValue();
+        assertThat(actualContentValues).isEqualTo(expectedContentValues);
+    }
+
+    @Test
+    public void returnUpdatedRowsFromPutRequest() {
+        int expectedCount = 123;
+        when(contentResolver.update(eq(uri), any(ContentValues.class), eq((String) null), eq((String[]) null))).thenReturn(expectedCount);
+
+        int actualCount = hiccupClient.put(uri, null);
+
+        assertThat(actualCount).isEqualTo(expectedCount);
+    }
+
 }

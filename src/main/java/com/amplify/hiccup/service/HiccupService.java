@@ -41,6 +41,12 @@ public class HiccupService {
         return controller.post(uri, contentValues);
     }
 
+    public int delegateUpdate(Uri uri, ContentValues contentValues) {
+        ControllerInfo controllerInfo = getControllerInfo(uri);
+        Controller controller = controllerInfo.controller;
+        return controller.put(uri, contentValues);
+    }
+
     ControllerInfo getControllerInfo(Uri uri) {
         int uriId = uriMatcher.match(uri);
         if (uriId == -1) {

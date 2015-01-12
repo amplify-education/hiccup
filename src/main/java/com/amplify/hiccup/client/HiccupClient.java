@@ -23,4 +23,9 @@ public class HiccupClient {
         ContentValues contentValues = requestAdapter.toValues(object);
         return context.getContentResolver().insert(uri, contentValues);
     }
+
+    public int put(Uri uri, Object object) {
+        ContentValues contentValues = requestAdapter.toValues(object);
+        return context.getContentResolver().update(uri, contentValues, null, null);
+    }
 }

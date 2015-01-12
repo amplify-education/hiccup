@@ -73,6 +73,18 @@ public class AbstractControllerTest {
         verify(abstractControllerSpy).handlePost(Uri.parse("/some/path/here"), expectedModel);
     }
 
+    @Test
+    public void invokeSubclassPutHandlerWithModelOnPut() {
+        ContentValues contentValues = new ContentValues();
+        Object expectedModel = new Object();
+        when(contentAdapter.toModel(contentValues, expectedModel.getClass())).thenReturn(expectedModel);
+        AbstractController abstractControllerSpy = spy(abstractController);
+
+        abstractControllerSpy.put(Uri.parse("/some/path/here"), contentValues);
+
+        verify(abstractControllerSpy).handlePut(Uri.parse("/some/path/here"), expectedModel);
+    }
+
     private static class AbstractControllerImpl extends AbstractController<Object> {
 
         public AbstractControllerImpl(ContentAdapter contentAdapter, Class<Object> modelClass) {
@@ -87,6 +99,11 @@ public class AbstractControllerTest {
         @Override
         protected Uri handlePost(Uri uri, Object model) {
             return POST_RESPONSE;
+        }
+
+        @Override
+        protected int handlePut(Uri uri, Object model) {
+            return 0;
         }
     }
 }

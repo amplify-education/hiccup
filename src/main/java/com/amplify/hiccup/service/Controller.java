@@ -6,5 +6,6 @@ import android.net.Uri;
 
 public interface Controller {
     Cursor get(Uri uri);
-    Uri post(Uri uri, ContentValues model);
+    Uri post(Uri uri, ContentValues contentValues);
+    int put(Uri routeOneUri, ContentValues contentValues);
 }
