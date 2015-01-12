@@ -6,7 +6,6 @@ out
 tmp
 gen
 .DS_Store
-screenshot_*.png
 .idea/
 *.iml
 app/gen-external-apklibs
@@ -16,4 +15,3 @@ app/gen-external-apklibs
 *.properties
 *.ipr
 .hooks/*.pyc
-
