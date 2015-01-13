@@ -1,21 +1,32 @@
-## Overview
 
-Hiccup is an Android library that layers _Http In ContentProviders_.
+### Overview
 
-It aims to bring RESTful and MVC-like concepts to ContentProviders to separate client/server concerns,
-allow UI/data layers to evolve independently, and improve code maintainability. A ContentProvider is like
-a locally running server, so the idea is that we can treat it like one and borrow some best practices from
-the web.
+Hiccup is an Android library that uses HTTP semantics in ContentProviders to make them easier to understand, use, and
+maintain.
+
+ContentProviders are similar to web service apis. They both communicate via URIs and allow client applications to read,
+create, and modify resources. So the idea is that we can think of them more like web service apis and borrow some best
+practices from the web.
+
+### Goals
+
+1. simplify ContentProvider code & readability
+1. separate client/provider concerns
+1. decouple persistence implementation (ie, sqlite) from ContentProvider
+1. expose a clean & simple api
+1. remain compatible within normal ContentProvider behavior
 
 #### Status
 Alpha, work in progress. Use at your own discretion. Currently supports:
 
-1. GET requests
-1. POST requests
+* GET
+* POST
+* PUT
+* DELETE
 
 #### Motivation
 
-Android's ContentProvider is a great tool for data abstraction and sharing,
+Android's ContentProvider is a great tool for data abstraction and cross-app sharing,
 but its interface is confusing and has several limitations. Mainly, its
 interface is half REST and half SQL, which result in the following:
 
@@ -24,8 +35,11 @@ interface is half REST and half SQL, which result in the following:
 1. table joins are difficult to support when using uri's + sql
 1. difficult to represent complex models in flat maps (Cursor or ContentValues)
 1. assumes SQL backend (ie, does not easily support NOSQL, file, shared pref, etc.)
+1. data/resources cannot be versioned
 
-Hiccup tries to overcome these challenges.
+Hiccup tries to overcome these issues by bringing RESTful and MVC-like concepts to ContentProviders, thereby separating
+client/server concerns, allowing UI/data layers to evolve independently, and improving code maintainability.
+
 
 ## Usage
 
