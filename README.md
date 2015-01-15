@@ -1,12 +1,11 @@
 
 ## Overview
 
-Hiccup is an Android library that uses HTTP semantics in ContentProviders to make them easier to understand, use, and
-maintain.
+Hiccup is an Android library that uses HTTP semantics in ContentProviders to make them easier to use
+and maintain.
 
-ContentProviders are similar to web service apis. They both communicate via URIs and allow client applications to read,
-create, and modify resources. So the idea is that we can think of them more like web service apis and borrow some best
-practices from the web.
+The idea is that we can think of ContentProviders more like web service apis and borrow some best
+practices, such as RESTful interfaces, routing/dispatching, and MVC-like concepts.
 
 #### Goals
 
@@ -15,6 +14,8 @@ practices from the web.
 1. decouple persistence implementation (ie, sqlite) from ContentProvider
 1. expose a clean & simple api
 1. remain compatible within normal ContentProvider behavior
+1. allow UI/data layers to evolve independently
+1. improve code maintainability
 
 #### Status
 Alpha, work in progress. Use at your own discretion. Currently supports:
@@ -33,13 +34,9 @@ interface is half REST and half SQL, which result in the following:
 1. clients (ie, ContentResolver) are forced to know underlying db schema via sql projections, where clauses, etc.
 1. restructuring tables (data normalization) breaks client code
 1. table joins are difficult to support when using uri's + sql
-1. difficult to represent complex models in flat maps (Cursor or ContentValues)
 1. assumes SQL backend (ie, does not easily support NOSQL, file, shared pref, etc.)
 1. data/resources cannot be versioned
-
-Hiccup tries to overcome these issues by bringing RESTful and MVC-like concepts to ContentProviders, thereby separating
-client/server concerns, allowing UI/data layers to evolve independently, and improving code maintainability.
-
+1. difficult to represent complex models in flat maps (Cursor or ContentValues)
 
 ## Usage
 
