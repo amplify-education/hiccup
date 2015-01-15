@@ -1,5 +1,5 @@
 
-### Overview
+## Overview
 
 Hiccup is an Android library that uses HTTP semantics in ContentProviders to make them easier to understand, use, and
 maintain.
@@ -8,7 +8,7 @@ ContentProviders are similar to web service apis. They both communicate via URIs
 create, and modify resources. So the idea is that we can think of them more like web service apis and borrow some best
 practices from the web.
 
-### Goals
+#### Goals
 
 1. simplify ContentProvider code & readability
 1. separate client/provider concerns
