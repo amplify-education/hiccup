@@ -4,12 +4,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
-public abstract class AbstractController<R> implements Controller {
+public abstract class ResourceController<R> implements Controller {
 
     private final ContentAdapter contentAdapter;
     private final Class<R> modelClass;
 
-    public AbstractController(ContentAdapter contentAdapter, Class<R> modelClass) {
+    public ResourceController(ContentAdapter contentAdapter, Class<R> modelClass) {
         this.contentAdapter = contentAdapter;
         this.modelClass = modelClass;
     }

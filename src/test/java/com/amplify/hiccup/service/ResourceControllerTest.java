@@ -19,11 +19,11 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(RobolectricTestRunner.class)
-public class AbstractControllerTest {
+public class ResourceControllerTest {
 
     private static Uri POST_RESPONSE = Uri.parse("/some/post/response");
 
-    private AbstractController abstractController;
+    private ResourceController resourceController;
 
     @Mock
     private ContentAdapter contentAdapter;
@@ -32,7 +32,7 @@ public class AbstractControllerTest {
     public void setUp() {
         initMocks(this);
 
-        abstractController = new AbstractControllerImpl(contentAdapter, Object.class);
+        resourceController = new ResourceControllerImpl(contentAdapter, Object.class);
     }
 
     @Test
@@ -40,25 +40,25 @@ public class AbstractControllerTest {
         Cursor expectedCursor = mock(Cursor.class);
         when(contentAdapter.toCursor(any(Iterable.class))).thenReturn(expectedCursor);
 
-        Cursor actualCursor = abstractController.get(Uri.EMPTY);
+        Cursor actualCursor = resourceController.get(Uri.EMPTY);
 
         assertThat(actualCursor).isEqualTo(expectedCursor);
     }
 
     @Test
     public void convertReturnUriFromSubclassOnPost() {
-        Uri actualUri = abstractController.post(any(Uri.class), any(ContentValues.class));
+        Uri actualUri = resourceController.post(any(Uri.class), any(ContentValues.class));
 
         assertThat(actualUri).isEqualTo(POST_RESPONSE);
     }
 
     @Test
     public void invokeSubclassGetHandlerOnGet() {
-        AbstractController abstractControllerSpy = spy(abstractController);
+        ResourceController resourceControllerSpy = spy(resourceController);
 
-        abstractControllerSpy.get(Uri.parse("/path/to/resource"));
+        resourceControllerSpy.get(Uri.parse("/path/to/resource"));
 
-        verify(abstractControllerSpy).handleGet(Uri.parse("/path/to/resource"));
+        verify(resourceControllerSpy).handleGet(Uri.parse("/path/to/resource"));
     }
 
     @Test
@@ -66,11 +66,11 @@ public class AbstractControllerTest {
         ContentValues contentValues = new ContentValues();
         Object expectedModel = new Object();
         when(contentAdapter.toModel(contentValues, expectedModel.getClass())).thenReturn(expectedModel);
-        AbstractController abstractControllerSpy = spy(abstractController);
+        ResourceController resourceControllerSpy = spy(resourceController);
 
-        abstractControllerSpy.post(Uri.parse("/some/path/here"), contentValues);
+        resourceControllerSpy.post(Uri.parse("/some/path/here"), contentValues);
 
-        verify(abstractControllerSpy).handlePost(Uri.parse("/some/path/here"), expectedModel);
+        verify(resourceControllerSpy).handlePost(Uri.parse("/some/path/here"), expectedModel);
     }
 
     @Test
@@ -78,25 +78,25 @@ public class AbstractControllerTest {
         ContentValues contentValues = new ContentValues();
         Object expectedModel = new Object();
         when(contentAdapter.toModel(contentValues, expectedModel.getClass())).thenReturn(expectedModel);
-        AbstractController abstractControllerSpy = spy(abstractController);
+        ResourceController resourceControllerSpy = spy(resourceController);
 
-        abstractControllerSpy.put(Uri.parse("/some/path/here"), contentValues);
+        resourceControllerSpy.put(Uri.parse("/a/path/is/a/path"), contentValues);
 
-        verify(abstractControllerSpy).handlePut(Uri.parse("/some/path/here"), expectedModel);
+        verify(resourceControllerSpy).handlePut(Uri.parse("/a/path/is/a/path"), expectedModel);
     }
 
     @Test
     public void invokeSubclassDeleteHandlerOnDelete() {
-        AbstractController abstractControllerSpy = spy(abstractController);
+        ResourceController resourceControllerSpy = spy(resourceController);
 
-        abstractControllerSpy.delete(Uri.parse("/any/path/will/do"));
+        resourceControllerSpy.delete(Uri.parse("/any/path/will/do"));
 
-        verify(abstractControllerSpy).handleDelete(Uri.parse("/any/path/will/do"));
+        verify(resourceControllerSpy).handleDelete(Uri.parse("/any/path/will/do"));
     }
 
-    private static class AbstractControllerImpl extends AbstractController<Object> {
+    private static class ResourceControllerImpl extends ResourceController<Object> {
 
-        public AbstractControllerImpl(ContentAdapter contentAdapter, Class<Object> modelClass) {
+        public ResourceControllerImpl(ContentAdapter contentAdapter, Class<Object> modelClass) {
             super(contentAdapter, modelClass);
         }
 
