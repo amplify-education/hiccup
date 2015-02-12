@@ -1,7 +1,6 @@
 package com.amplify.hiccup.client;
 
-import android.content.ContentValues;
-import android.content.Context;
+import android.content.*;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -32,4 +31,9 @@ public class HiccupClient {
     public int delete(Uri uri) {
         return context.getContentResolver().delete(uri, null, null);
     }
+
+    public BatchRequest newBatch() {
+        return new BatchRequest(context, requestAdapter);
+    }
+
 }
