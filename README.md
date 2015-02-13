@@ -6,8 +6,8 @@ simplify data access and improve performance.
 
 It lets UIs communicate with ContentProviders using GET/POST/etc semantics. It
 *does not* make actual HTTP requests to the internet. One benefit of this is that
-the UI becomes decoupled from the persistence implementation (eg, sqlite) and does
-not need to know about WHERE clauses, etc.
+the UI becomes decoupled from the persistence implementation of the ContentProvider
+(eg, sqlite) and does not need to know about WHERE clauses, etc.
 
 The idea is to approach ContentProviders more like RESTful web service apis;
 they are so similar that we can borrow some established best practices,
