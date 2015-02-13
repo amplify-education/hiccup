@@ -28,6 +28,7 @@ Alpha, work in progress. Use at your own discretion. Currently supports:
 * POST
 * PUT
 * DELETE
+* batch requests
 
 #### Motivation
 
