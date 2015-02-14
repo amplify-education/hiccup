@@ -13,6 +13,17 @@ The idea is to approach ContentProviders more like RESTful web service apis;
 they are so similar that we can borrow some established best practices,
 including RESTful interfaces and MVC-like concepts.
 
+#### Status
+[![Build Status](https://travis-ci.org/amplify-education/hiccup.svg?branch=master)](https://travis-ci.org/amplify-education/hiccup)
+
+Approaching a 1.0 pre-release. Currently supports:
+
+* GET
+* POST
+* PUT
+* DELETE
+* batch requests
+
 #### Goals
 
 1. improve code maintainability of ContentProviders
@@ -20,15 +31,6 @@ including RESTful interfaces and MVC-like concepts.
 1. allow UI/data layers to evolve independently
 1. expose a clean & simple api for developers
 1. remain compatible within normal ContentProvider behavior
-
-#### Status
-Alpha, work in progress. Use at your own discretion. Currently supports:
-
-* GET
-* POST
-* PUT
-* DELETE
-* batch requests
 
 #### Motivation
 
