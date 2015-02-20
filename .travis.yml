@@ -10,3 +10,11 @@ android:
     - android-16
   licenses:
     - android-sdk-license-5be876d5
+
+env:
+  global:
+    - secure: "QIhYVm0pZOUtnZHn060xkgR5mklfxnHZdVn6aKcmR/9h9Y0YL1GFM4UNJpyOOjQTG8wlaUlxjaVhfQ6nz3uI4zzAJBpP/g4oKJGfxFbJOoriKJQGhjYNb+egP8mCpJZFDdwgpJjav1tFVcPYXL3iGXm/P7VJFDuqviaIJZuuv4o="
+    - secure: "OdQ1Mub1/5/W3Uefka5tCCo6fvF+kwxsPyGQDMaylXAwnPREsTFIxIVcn2l8G9+r7CI3nuGcArHjGacxxTanH/zNqa3gbWIf+JM/7aYmaA4IoJla+pZfohE17MvSGRIPTX5OxYW9kuB3IGVrkkLCnz9BqTbJ91hMplAX4QrR5cA="
+
+after_success:
+  - continuous-integration/publish-snapshot.sh
