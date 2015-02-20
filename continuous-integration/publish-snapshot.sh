@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # see https://coderwall.com/p/9b_lfq
 
