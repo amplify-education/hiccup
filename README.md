@@ -16,13 +16,18 @@ including RESTful interfaces and MVC-like concepts.
 #### Status
 [![Build Status](https://travis-ci.org/amplify-education/hiccup.svg?branch=master)](https://travis-ci.org/amplify-education/hiccup)
 
-Approaching a 1.0 pre-release. Currently supports:
+Approaching a 1.0 pre-release. Grab **1.0 snapshot version** like so:
+```xml
+<dependencies>
+  <dependency>
+    <groupId>com.amplify</groupId>
+    <artifactId>hiccup</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </dependency>
+</dependencies>
+```
 
-* GET
-* POST
-* PUT
-* DELETE
-* batch requests
+Currently supports: _GET_, _POST_, _PUT_, _DELETE_, and batch requests
 
 #### Goals
 
