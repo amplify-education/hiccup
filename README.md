@@ -121,3 +121,8 @@ public class PostsController implements Controller {
     }
 }
 ```
+
+# Thanks!
+
+To [Dave Cameron](https://github.com/davcamer), a former colleague, who inspired some ideas here. Please be sure to
+check oot his profile, eh?
