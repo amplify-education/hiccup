@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -34,8 +33,6 @@ public class BatchRequestTest {
     private ContentResolver contentResolver;
     @Mock
     private ContentProvider contentProvider;
-    @Mock
-    private RequestAdapter requestAdapter;
     @Captor
     private ArgumentCaptor<ArrayList<ContentProviderOperation>> operationListCaptor;
 
@@ -49,7 +46,7 @@ public class BatchRequestTest {
         given(context.getContentResolver()).willReturn(contentResolver);
         given(contentProvider.insert(any(Uri.class), any(ContentValues.class))).willReturn(uri);
 
-        batchRequest = new BatchRequest(context, requestAdapter);
+        batchRequest = new BatchRequest(context);
     }
 
     @Test
@@ -64,24 +61,22 @@ public class BatchRequestTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void authoritiesMustBeTheSameForAllRequests() {
-        when(requestAdapter.toValues(anyObject())).thenReturn(new ContentValues());
         Uri authorityOne = Uri.parse("content://com.abstract/path/to/file");
         Uri authorityTwo = Uri.parse("content://com.dragon/path/to/file");
 
         batchRequest
-                .post(authorityOne, new Object())
-                .put(authorityTwo, new Object());
+                .post(authorityOne, new ContentValues())
+                .put(authorityTwo, new ContentValues());
     }
 
     @Test
     public void requestsAreNotSentIfBatchNotSubmitted() {
         ContentValues contentValues = new ContentValues();
         contentValues.put("some", "thing");
-        when(requestAdapter.toValues(anyObject())).thenReturn(contentValues);
 
         batchRequest
-                .post(uri, new Object())
-                .put(uri, new Object())
+                .post(uri, contentValues)
+                .put(uri, contentValues)
                 .delete(uri);
 
         verifyZeroInteractions(contentResolver);
@@ -91,11 +86,10 @@ public class BatchRequestTest {
     public void multipleRequestsCanBeAddedToBatch() {
         ContentValues contentValues = new ContentValues();
         contentValues.put("any", "value");
-        when(requestAdapter.toValues(anyObject())).thenReturn(contentValues);
 
         batchRequest
-                .post(uri, new Object())
-                .put(uri, new Object())
+                .post(uri, contentValues)
+                .put(uri, contentValues)
                 .delete(uri);
 
         assertThat(batchRequest.size()).isEqualTo(3);
@@ -103,13 +97,11 @@ public class BatchRequestTest {
 
     @Test
     public void submitPostRequestFromBatch() throws RemoteException, OperationApplicationException {
-        Object model = new Object();
         ContentValues expectedContentValues = new ContentValues();
         expectedContentValues.put("yes", "no");
-        when(requestAdapter.toValues(model)).thenReturn(expectedContentValues);
 
         batchRequest
-                .post(uri, model)
+                .post(uri, expectedContentValues)
                 .submit();
 
         simulateApplyContentProviderOperations();
@@ -118,13 +110,11 @@ public class BatchRequestTest {
 
     @Test
     public void submitPutRequestFromBatch() throws RemoteException, OperationApplicationException {
-        Object model = new Object();
         ContentValues expectedContentValues = new ContentValues();
         expectedContentValues.put("blues", "brothers");
-        when(requestAdapter.toValues(model)).thenReturn(expectedContentValues);
 
         batchRequest
-                .put(uri, model)
+                .put(uri, expectedContentValues)
                 .submit();
 
         simulateApplyContentProviderOperations();
@@ -145,11 +135,10 @@ public class BatchRequestTest {
     public void multipleRequestsAreAppliedInOrderAdded() throws RemoteException, OperationApplicationException {
         ContentValues contentValues = new ContentValues();
         contentValues.put("any", "value");
-        when(requestAdapter.toValues(anyObject())).thenReturn(contentValues);
 
         batchRequest
-                .post(uri, new Object())
-                .put(uri, new Object())
+                .post(uri, contentValues)
+                .put(uri, contentValues)
                 .delete(uri)
                 .submit();
 

@@ -7,24 +7,20 @@ import android.net.Uri;
 public class HiccupClient {
 
     private final Context context;
-    private final RequestAdapter requestAdapter;
 
-    public HiccupClient(Context context, RequestAdapter requestAdapter) {
+    public HiccupClient(Context context) {
         this.context = context;
-        this.requestAdapter = requestAdapter;
     }
 
     public Cursor get(Uri uri) {
         return context.getContentResolver().query(uri, null, null, null, null);
     }
 
-    public Uri post(Uri uri, Object object) {
-        ContentValues contentValues = requestAdapter.toValues(object);
+    public Uri post(Uri uri, ContentValues contentValues) {
         return context.getContentResolver().insert(uri, contentValues);
     }
 
-    public int put(Uri uri, Object object) {
-        ContentValues contentValues = requestAdapter.toValues(object);
+    public int put(Uri uri, ContentValues contentValues) {
         return context.getContentResolver().update(uri, contentValues, null, null);
     }
 
@@ -33,7 +29,7 @@ public class HiccupClient {
     }
 
     public BatchRequest newBatch() {
-        return new BatchRequest(context, requestAdapter);
+        return new BatchRequest(context);
     }
 
 }

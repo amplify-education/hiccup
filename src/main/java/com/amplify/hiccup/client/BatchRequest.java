@@ -9,20 +9,17 @@ import java.util.ArrayList;
 public class BatchRequest {
 
     private final Context context;
-    private final RequestAdapter requestAdapter;
 
     private String authority;
     private ArrayList<ContentProviderOperation> operations;
 
-    BatchRequest(Context context, RequestAdapter requestAdapter) {
+    BatchRequest(Context context) {
         this.context = context;
-        this.requestAdapter = requestAdapter;
         this.operations = new ArrayList<ContentProviderOperation>();
     }
 
-    public BatchRequest post(Uri uri, Object model) {
+    public BatchRequest post(Uri uri, ContentValues contentValues) {
         assertAndSetCommonAuthority(uri);
-        ContentValues contentValues = requestAdapter.toValues(model);
         ContentProviderOperation operation = ContentProviderOperation
                 .newInsert(uri)
                 .withValues(contentValues)
@@ -31,9 +28,8 @@ public class BatchRequest {
         return this;
     }
 
-    public BatchRequest put(Uri uri, Object model) {
+    public BatchRequest put(Uri uri, ContentValues contentValues) {
         assertAndSetCommonAuthority(uri);
-        ContentValues contentValues = requestAdapter.toValues(model);
         ContentProviderOperation operation = ContentProviderOperation
                 .newUpdate(uri)
                 .withValues(contentValues)

@@ -26,8 +26,6 @@ public class HiccupClientTest {
     private Context context;
     @Mock
     private ContentResolver contentResolver;
-    @Mock
-    private RequestAdapter requestAdapter;
 
     private Uri uri;
 
@@ -38,7 +36,7 @@ public class HiccupClientTest {
         uri = Uri.parse("content://com.fake.authority/some/fake/path");
         given(context.getContentResolver()).willReturn(contentResolver);
 
-        hiccupClient = new HiccupClient(context, requestAdapter);
+        hiccupClient = new HiccupClient(context);
     }
 
     @Test
@@ -52,12 +50,10 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void insertContentValuesFromDomainModelOnPostRequest() {
-        Object model = new Object();
+    public void insertContentValuesOnPostRequest() {
         ContentValues expectedContentValues = new ContentValues();
-        when(requestAdapter.toValues(model)).thenReturn(expectedContentValues);
 
-        hiccupClient.post(uri, model);
+        hiccupClient.post(uri, expectedContentValues);
 
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
         verify(contentResolver).insert(eq(uri), captor.capture());
@@ -76,13 +72,11 @@ public class HiccupClientTest {
     }
 
     @Test
-    public void updateContentValuesFromDomainModelOnPutRequest() {
-        Object model = new Object();
+    public void updateContentValuesOnPutRequest() {
         ContentValues expectedContentValues = new ContentValues();
         expectedContentValues.put("test", "value");
-        when(requestAdapter.toValues(model)).thenReturn(expectedContentValues);
 
-        hiccupClient.put(uri, model);
+        hiccupClient.put(uri, expectedContentValues);
 
         ArgumentCaptor<ContentValues> captor = ArgumentCaptor.forClass(ContentValues.class);
         verify(contentResolver).update(eq(uri), captor.capture(), eq((String) null), eq((String[]) null));
