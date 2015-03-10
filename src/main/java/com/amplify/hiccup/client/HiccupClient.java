@@ -28,8 +28,11 @@ public class HiccupClient {
         return context.getContentResolver().delete(uri, null, null);
     }
 
+    public int patch(Uri uri, ContentValues[] contentValues) {
+        return context.getContentResolver().bulkInsert(uri, contentValues);
+    }
+
     public BatchRequest newBatch() {
         return new BatchRequest(context);
     }
-
 }

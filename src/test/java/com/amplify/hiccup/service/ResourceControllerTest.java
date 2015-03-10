@@ -119,5 +119,10 @@ public class ResourceControllerTest {
         protected int handleDelete(Uri uri) {
             return 0;
         }
+
+        @Override
+        public int patch(Uri uri, ContentValues[] contentValues) {
+            return 0;
+        }
     }
 }

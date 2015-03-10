@@ -9,4 +9,5 @@ public interface Controller {
     Uri post(Uri uri, ContentValues contentValues);
     int put(Uri uri, ContentValues contentValues);
     int delete(Uri uri);
+    int patch(Uri uri, ContentValues[] contentValues);
 }

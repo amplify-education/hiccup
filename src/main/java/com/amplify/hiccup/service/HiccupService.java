@@ -140,6 +140,29 @@ public class HiccupService {
         return controller.delete(uri);
     }
 
+    /**
+     * Delegates to the appropriate {@link Controller#patch(android.net.Uri, android.content.ContentValues[])}
+     * for a matching route registered in {@link #newRoute(String, Controller)}.
+     *
+     * <p>This method would typically be called from within
+     * {@link android.content.ContentProvider#bulkInsert(android.net.Uri, android.content.ContentValues[])}.</p>
+     *
+     * @param uri the uri of the request.
+     * @param contentValues an ordered list of operations as defined in RFC 6902
+     *
+     * @return int the number of affected rows returned from the
+     *     {@link Controller#delete(android.net.Uri)} that handled the request.
+     *
+     * @throws IllegalArgumentException if no route exists to handle the request.
+     *
+     * @see <a href="http://tools.ietf.org/html/rfc6902">http://tools.ietf.org/html/rfc6902</a>
+     */
+    public int delegatePatch(Uri uri, ContentValues[] contentValues) {
+        ControllerInfo controllerInfo = getControllerInfo(uri);
+        Controller controller = controllerInfo.controller;
+        return controller.patch(uri, contentValues);
+    }
+
     ControllerInfo getControllerInfo(Uri uri) {
         int uriId = uriMatcher.match(uri);
         if (uriId == -1) {

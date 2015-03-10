@@ -112,6 +112,32 @@ public class HiccupClientTest {
     }
 
     @Test
+    public void patchUriForPatchRequest() {
+        ContentValues[] values = new ContentValues[] {
+                new ContentValues(),
+                new ContentValues()
+        };
+
+        hiccupClient.patch(uri, values);
+
+        verify(contentResolver).bulkInsert(eq(uri), eq(values));
+    }
+
+    @Test
+    public void returnSuccessfulOperationCountFromPatchRequest() {
+        int expectedCount = 456;
+        ContentValues[] values = new ContentValues[] {
+                new ContentValues(),
+                new ContentValues()
+        };
+        when(contentResolver.bulkInsert(eq(uri), eq(values))).thenReturn(expectedCount);
+
+        int actualCount = hiccupClient.patch(uri, values);
+
+        assertThat(actualCount).isEqualTo(expectedCount);
+    }
+
+    @Test
     public void createNewBatch() {
         BatchRequest batch = hiccupClient.newBatch();
 
