@@ -8,7 +8,7 @@ if [ "$TRAVIS_REPO_SLUG" == "amplify-education/hiccup" ] && \
    [ "$TRAVIS_BRANCH" == "master" ]; then
   echo -e "Publishing maven snapshot...\n"
 
-  mvn clean source:jar deploy --settings="continuous-integration/settings.xml" -DskipTests=true -Dinvoker.skip=true -Dmaven.javadoc.skip=true
+  mvn clean source:jar javadoc:jar deploy --settings="continuous-integration/settings.xml" -DskipTests=true -Dinvoker.skip=true
 
   echo -e "Published maven snapshot"
 fi
