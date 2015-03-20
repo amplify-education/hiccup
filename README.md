@@ -26,11 +26,6 @@ Approaching a 1.0 pre-release. Grab **1.0 snapshot version** like so:
 
 Currently supports: _GET_, _POST_, _PUT_, _DELETE_, and batch requests
 
-#### Winter Hack Week '15 Achievement
-[![Build Status](http://ecx.images-amazon.com/images/I/61tUc4Y0eEL._SX522_.jpg)](http://ecx.images-amazon.com/images/I/61tUc4Y0eEL._SX522_.jpg)
-Success!
-
-
 #### Goals
 
 1. improve code maintainability of ContentProviders
