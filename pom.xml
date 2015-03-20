@@ -15,7 +15,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>hiccup</name>
-    <description>HTTP in ContentProviders.</description>
+    <description>HTTP semantics and REST for Android ContentProviders.</description>
     <url>https://github.com/amplify-education/hiccup</url>
 
     <properties>
